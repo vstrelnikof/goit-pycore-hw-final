@@ -12,7 +12,7 @@ class Note(BaseModel):
     def tags_string(self) -> str:
         return ', '.join(self.tags)
     
-    def _validate(self) -> dict:
+    def _validate(self) -> dict[str, bool]:
         return {
             "text": not self.text,
         }

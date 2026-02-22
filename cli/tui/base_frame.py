@@ -1,9 +1,9 @@
-from cli.tui.scene_type import SceneType
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
+from cli.tui.scene_type import SceneType
 
 class BaseFrame(Frame):
     """Архі-клас для реалізації вікон"""

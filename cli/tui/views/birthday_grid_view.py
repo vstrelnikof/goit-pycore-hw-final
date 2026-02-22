@@ -1,9 +1,9 @@
-from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Text
 from cli.tui.views.base_grid_view import BaseGridView
-from utils.utils import days_left_in_year
+from utils.state import AppState
 from utils.validator import Validator
+from helpers.date_helpers import days_left_in_year
 
 class BirthdayGridView(BaseGridView):
     _is_search_enabled = False

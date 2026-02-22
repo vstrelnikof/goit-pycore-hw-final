@@ -21,7 +21,7 @@ class Contact(BaseModel):
         contact_birthday: datetime = datetime.strptime(self.birthday, "%Y-%m-%d")
         return contact_birthday.date()
 
-    def _validate(self) -> dict:
+    def _validate(self) -> dict[str, bool]:
         return {
             "name": not self.name,
             "phone": not self.phone or Validator.validate_phone(self.phone),

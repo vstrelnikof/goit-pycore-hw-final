@@ -22,6 +22,6 @@ class BaseModel(ABC):
         return not is_failed
 
     @abstractmethod
-    def _validate(self) -> dict:
+    def _validate(self) -> dict[str, bool]:
         """Абстрактний метод для реалізації перевірки відповідної даних моделі"""
         pass

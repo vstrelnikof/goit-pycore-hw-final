@@ -1,4 +1,3 @@
-from collections import namedtuple
 from datetime import date, datetime
 from typing import final
 from decorators.log_decorator import log_action
