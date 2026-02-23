@@ -37,7 +37,7 @@ class AddressBookService(BaseService):
         table_data: list[tuple[list[str], int]] = []
         for i, contact in enumerate(self.contacts):
             is_relevant: bool = any([contact for contact_field_name, contact_field_value
-                                     in vars(contact).items()
+                                     in contact.to_dict().items()
                                      if contact_field_name != "id" and 
                                      search_term in contact_field_value.lower()])
             if not is_relevant:
