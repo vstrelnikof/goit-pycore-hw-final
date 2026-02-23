@@ -55,14 +55,14 @@ class BaseForm(BaseFrame):
             elif hasattr(widget, "is_valid") and not widget.is_valid:
                 errors.append(f"Поле '{widget.label}' заповнено некоректно!")
 
-        errors_exists = bool(errors)
+        has_errors = bool(errors)
 
-        if errors_exists:
+        if has_errors:
             self.scene.add_effect(
                 PopUpDialog(self._screen, '\n'.join(errors), ["Виправити"])
             )
 
-        return not errors_exists
+        return not has_errors
     
     def _clear_edit(self):
         self._edit_index = None

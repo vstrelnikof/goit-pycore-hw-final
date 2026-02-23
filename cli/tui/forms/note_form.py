@@ -14,7 +14,7 @@ class NoteForm(BaseForm):
         super().__init__(screen, state, can_scroll=False)
     
     def _render_content(self) -> None:
-        self._required_fields = ["name"]
+        self._required_fields = ["text"]
         
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
@@ -22,7 +22,7 @@ class NoteForm(BaseForm):
 
         layout.add_widget(Divider())
 
-        layout.add_widget(TextBox(10, label="Текст:", name="text", as_string=True))
+        layout.add_widget(TextBox(10, label="Текст*:", name="text", as_string=True))
 
         layout.add_widget(Divider())
         
