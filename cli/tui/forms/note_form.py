@@ -32,7 +32,8 @@ class NoteForm(BaseForm):
     
     def reset(self) -> None:
         super().reset()
-        self.title = "📝 Нова нотатка" if self._state.edit_index is None else "📝 Редагування нотатки"
+        self.title = "📝 Нова нотатка" \
+            if self._state.edit_index is None else "📝 Редагування нотатки"
         if self._edit_index is not None:
             note: Note = self._state.notes_manager.notes[self._edit_index]
             self.data = {

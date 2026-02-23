@@ -38,7 +38,8 @@ class ContactForm(BaseForm):
     
     def reset(self) -> None:
         super().reset()
-        self.title = "👤 Новий контакт" if self._state.edit_index is None else "👤 Редагування контакту"
+        self.title = "👤 Новий контакт" \
+            if self._state.edit_index is None else "👤 Редагування контакту"
         if self._edit_index is not None:
             contact: Contact = self._state.address_book_manager.contacts[self._edit_index]
             self.data = {

@@ -15,7 +15,7 @@ class Note(BaseModel):
     
     def _validate(self) -> dict[str, bool]:
         return {
-            "text": bool(self.text),
+            "text": bool(self.text.strip()),
         }
     
     def __str__(self):

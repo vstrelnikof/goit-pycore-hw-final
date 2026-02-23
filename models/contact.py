@@ -24,7 +24,7 @@ class Contact(BaseModel):
 
     def _validate(self) -> dict[str, bool]:
         return {
-            "name": bool(self.name),
+            "name": bool(self.name.strip()),
             "phone": not self.phone or Validator.validate_phone(self.phone),
             "email": not self.email or Validator.validate_email(self.email),
             "birthday": not self.birthday or Validator.validate_date(self.birthday)
