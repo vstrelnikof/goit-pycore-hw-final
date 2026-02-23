@@ -48,7 +48,7 @@ class Contact(BaseModel):
         if isinstance(data.get("id"), str):
             data["id"] = UUID(data["id"])
         birthday = data.get("birthday")
-        if isinstance(birthday, str):
+        if isinstance(birthday, str) and bool(birthday):
             data["birthday"] = datetime.strptime(birthday, "%Y-%m-%d") \
             .date().isoformat()
         return cls(**data)
