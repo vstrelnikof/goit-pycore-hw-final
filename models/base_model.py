@@ -13,11 +13,10 @@ class BaseModel(ABC):
     def is_valid(self) -> bool:
         """Метод який фактично валідує модель та обробляє результат"""
         validation_result: dict = self._validate()
-        is_failed: bool = any(result for _, result in validation_result.items()
-                              if not result)
-        if is_failed:
+        has_errors: bool = any(not result for result in validation_result.values())
+        if has_errors:
             logging.warning(f"Model validation failed: {str(validation_result)}")
-        return not is_failed
+        return not has_errors
     
     def to_dict(self) -> dict:
         """Перетворює модель у словник, придатний для JSON"""
