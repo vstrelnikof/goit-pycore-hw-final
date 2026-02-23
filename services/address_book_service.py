@@ -78,7 +78,10 @@ class AddressBookService(BaseService):
         return list(map(lambda row: f"  • {row.birthday_date.strftime('%d.%m')}: {row.contact.name}", upcoming_contacts)) \
             if upcoming_contacts else ["На найближчий тиждень іменинників немає"]
 
-    def is_birthday_soon(self, next_birthday_date: date, days: int, today: datetime | date = datetime.now().date()) -> bool:
+    def is_birthday_soon(self, 
+                         next_birthday_date: date,
+                         days: int,
+                         today: datetime | date = datetime.now().date()) -> bool:
         days_until: int = (next_birthday_date - today).days
         return 0 <= days_until <= days
 
