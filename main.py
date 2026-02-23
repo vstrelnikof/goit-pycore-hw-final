@@ -40,6 +40,5 @@ def demo(screen: Screen, state: AppState):
                 stop_on_resize=True,
                 repeat=True)
 
-if __name__ == "__main__":
-    logging.info("Starting personal assistant...")
-    Screen.wrapper(demo, arguments=[app_state])
+logging.info("Starting personal assistant...")
+Screen.wrapper(demo, arguments=[app_state])
