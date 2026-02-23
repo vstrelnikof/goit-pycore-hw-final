@@ -75,8 +75,9 @@ class AddressBookService(BaseService):
             if next_birthday_date and self.is_birthday_soon(next_birthday_date, 7):
                 upcoming_contacts.append(ContactBirthday(next_birthday_date, contact))
         upcoming_contacts.sort(key=lambda row: row.birthday_date)
-        return list(map(lambda row: f"  • {row.birthday_date.strftime('%d.%m')}: {row.contact.name}", upcoming_contacts)) \
-            if upcoming_contacts else ["На найближчий тиждень іменинників немає"]
+        return [f"  • {row.birthday_date.strftime('%d.%m')}: {row.contact.name}" \
+                for row in upcoming_contacts] \
+                if upcoming_contacts else ["На найближчий тиждень іменинників немає"]
 
     def is_birthday_soon(self, 
                          next_birthday_date: date,
