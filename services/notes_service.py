@@ -12,7 +12,7 @@ class NotesService(BaseService):
 
     @log_action
     def add_note(self, data: dict) -> None:
-        new_note: Note = self.__get_note_from_dict(data)
+        new_note: Note = Note.from_dict(data)
         if not new_note.is_valid():
             return
         self.notes.append(new_note)
@@ -20,7 +20,7 @@ class NotesService(BaseService):
     
     @log_action
     def edit_note(self, index: int, data: dict) -> None:
-        updated_note: Note = self.__get_note_from_dict(data)
+        updated_note: Note = Note.from_dict(data)
         if not updated_note.is_valid():
             return
         self.notes[index] = updated_note
@@ -47,12 +47,7 @@ class NotesService(BaseService):
         return table_data
 
     def save(self) -> None:
-        self.storage.save([n.__dict__ for n in self.notes])
+        self.storage.save([c.to_dict() for c in self.notes])
     
     def reload(self) -> None:
-        self.notes = [Note(**n) for n in self.storage.load()]
-    
-    def __get_note_from_dict(self, data: dict) -> Note:
-        note = Note(data["text"])
-        note.set_tags_from_string(data["tags"])
-        return note
+        self.notes = [Note.from_dict(n) for n in self.storage.load()]

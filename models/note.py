@@ -1,9 +1,10 @@
 from dataclasses import dataclass, field
 from typing import final
+from uuid import UUID
 from models.base_model import BaseModel
 
 @final
-@dataclass
+@dataclass(kw_only=True)
 class Note(BaseModel):
     text: str
     tags: list[str] = field(default_factory=list)
@@ -14,13 +15,18 @@ class Note(BaseModel):
     
     def _validate(self) -> dict[str, bool]:
         return {
-            "text": not self.text,
+            "text": bool(self.text),
         }
-    
-    def set_tags_from_string(self, tags_string: str) -> None:
-        if tags_string:
-            self.tags = [tag.strip() for tag in tags_string.split(',')]
     
     def __str__(self):
         tags_str = ", ".join(self.tags) if self.tags else "без тегів"
         return f"Нотатка: {self.text} | Теги: {tags_str}"
+    
+    @classmethod
+    def from_dict(cls, data: dict):
+        if isinstance(data.get("id"), str):
+            data["id"] = UUID(data["id"])
+        tags = data.get("tags")
+        if isinstance(tags, str):
+            data["tags"] = [tag.strip() for tag in tags.split(',')]
+        return cls(**data)

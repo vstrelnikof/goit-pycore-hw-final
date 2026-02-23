@@ -14,7 +14,7 @@ class AddressBookService(BaseService):
 
     @log_action
     def add_contact(self, data: dict) -> None:
-        new_contact: Contact = self.__get_contact_from_dict(data)
+        new_contact: Contact = Contact.from_dict(data)
         if not new_contact.is_valid():
             return
         self.contacts.append(new_contact)
@@ -22,7 +22,7 @@ class AddressBookService(BaseService):
     
     @log_action
     def edit_contact(self, index: int, data: dict) -> None:
-        updated_contact: Contact = self.__get_contact_from_dict(data)
+        updated_contact: Contact = Contact.from_dict(data)
         if not updated_contact.is_valid():
             return
         self.contacts[index] = updated_contact
@@ -36,8 +36,10 @@ class AddressBookService(BaseService):
     def get_contacts_table_data(self, search_term: str) -> list[tuple[list[str], int]]:
         table_data: list[tuple[list[str], int]] = []
         for i, contact in enumerate(self.contacts):
-            is_relevant: bool = any([contact for _, contact_field_value in vars(contact).items()
-                                     if search_term in contact_field_value.lower()])
+            is_relevant: bool = any([contact for contact_field_name, contact_field_value
+                                     in vars(contact).items()
+                                     if contact_field_name != "id" and 
+                                     search_term in contact_field_value.lower()])
             if not is_relevant:
                 continue
             birthday_date: date | None = contact.birthday_date
@@ -79,16 +81,9 @@ class AddressBookService(BaseService):
     def is_birthday_soon(self, next_birthday_date: date, days: int, today: datetime | date = datetime.now().date()) -> bool:
         days_until: int = (next_birthday_date - today).days
         return 0 <= days_until <= days
-    
+
     def save(self) -> None:
-        self.storage.save([c.__dict__ for c in self.contacts])
+        self.storage.save([c.to_dict() for c in self.contacts])
 
     def reload(self) -> None:
-        self.contacts = [Contact(**c) for c in self.storage.load()]
-    
-    def __get_contact_from_dict(self, data: dict) -> Contact:
-        return Contact(**{
-            k: (datetime.strptime(v, "%Y-%m-%d").date().isoformat()
-                if k == "birthday" and v else v)
-            for k, v in data.items()
-        })
+        self.contacts = [Contact.from_dict(c) for c in self.storage.load()]

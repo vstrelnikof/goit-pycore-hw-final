@@ -1,15 +1,13 @@
 import logging
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field
 from abc import ABC, abstractmethod
 from typing import final
-from uuid import uuid4
+from uuid import UUID, uuid4
 
-@dataclass
+@dataclass(kw_only=True)
 class BaseModel(ABC):
     """Архі-тип для реалізації моделі даних"""
-
-    def __init__(self) -> None:
-        self.id = uuid4()
+    id: UUID = field(default_factory=uuid4)
 
     @final
     def is_valid(self) -> bool:
@@ -20,8 +18,19 @@ class BaseModel(ABC):
         if is_failed:
             logging.warning(f"Model validation failed: {str(validation_result)}")
         return not is_failed
+    
+    def to_dict(self) -> dict:
+        """Перетворює модель у словник, придатний для JSON"""
+        data: dict = asdict(self)
+        data['id'] = str(self.id)
+        return data
 
     @abstractmethod
     def _validate(self) -> dict[str, bool]:
         """Абстрактний метод для реалізації перевірки відповідної даних моделі"""
         pass
+    
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Віртуальний фабричний метод для створення екземпляру із словника (форми)"""
+        return cls(**data)
