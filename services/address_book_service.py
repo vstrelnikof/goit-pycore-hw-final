@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from typing import final
-from decorators.log_decorator import log_action
+from decorators.log_decorator import log_command_action
 from models.contact import Contact
 from models.contact_birthday import ContactBirthday
 from services.base_service import BaseService
@@ -12,7 +12,7 @@ class AddressBookService(BaseService):
     def find_contact_by_id(self, id: str) -> (Contact | None):
         return next((contact for contact in self.contacts if contact.id == id), None)
 
-    @log_action
+    @log_command_action
     def add_contact(self, data: dict) -> None:
         new_contact: Contact = Contact.from_dict(data)
         if not new_contact.is_valid():
@@ -20,7 +20,7 @@ class AddressBookService(BaseService):
         self.contacts.append(new_contact)
         self.save()
     
-    @log_action
+    @log_command_action
     def edit_contact(self, index: int, data: dict) -> None:
         updated_contact: Contact = Contact.from_dict(data)
         if not updated_contact.is_valid():
@@ -28,11 +28,11 @@ class AddressBookService(BaseService):
         self.contacts[index] = updated_contact
         self.save()
 
-    @log_action
+    @log_command_action
     def delete_contact(self, index: int) -> None:
         self.contacts.pop(index)
         self.save()
-    
+
     def get_contacts_table_data(self, search_term: str) -> list[tuple[list[str], int]]:
         table_data: list[tuple[list[str], int]] = []
         for i, contact in enumerate(self.contacts):
@@ -51,7 +51,7 @@ class AddressBookService(BaseService):
                                                  birthday], i)
             table_data.append(table_row)
         return table_data
-    
+
     def get_birthdays_table_data(self, days: int) -> list[tuple[list[str], int]]:
         table_data: list[tuple[list[str], int]] = []
         today: date = datetime.now().date()
@@ -77,7 +77,7 @@ class AddressBookService(BaseService):
         upcoming_contacts.sort(key=lambda row: row.birthday_date)
         return list(map(lambda row: f"  • {row.birthday_date.strftime('%d.%m')}: {row.contact.name}", upcoming_contacts)) \
             if upcoming_contacts else ["На найближчий тиждень іменинників немає"]
-    
+
     def is_birthday_soon(self, next_birthday_date: date, days: int, today: datetime | date = datetime.now().date()) -> bool:
         days_until: int = (next_birthday_date - today).days
         return 0 <= days_until <= days

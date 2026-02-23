@@ -25,11 +25,11 @@ class Contact(BaseModel):
     def _validate(self) -> dict[str, bool]:
         return {
             "name": bool(self.name),
-            "phone": bool(self.phone) and Validator.validate_phone(self.phone),
-            "email": bool(self.email) and Validator.validate_email(self.email),
-            "birthday": bool(self.birthday) and Validator.validate_date(self.birthday)
+            "phone": not self.phone or Validator.validate_phone(self.phone),
+            "email": not self.email or Validator.validate_email(self.email),
+            "birthday": not self.birthday or Validator.validate_date(self.birthday)
         }
-    
+
     def get_next_birthday_date(self, today: datetime | date = datetime.now().date()) -> (date | None):
         """Повертає дату наступного Дня Народження Контакту"""
         contact_birthday: date | None = self.birthday_date
@@ -42,7 +42,7 @@ class Contact(BaseModel):
 
     def __str__(self):
         return f"{self.name.ljust(15)} | 📱 {self.phone} | 🎂 {self.birthday}"
-    
+
     @classmethod
     def from_dict(cls, data: dict):
         if isinstance(data.get("id"), str):

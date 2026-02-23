@@ -1,5 +1,5 @@
 from typing import final
-from decorators.log_decorator import log_action
+from decorators.log_decorator import log_command_action
 from models.note import Note
 from services.base_service import BaseService
 
@@ -10,15 +10,15 @@ class NotesService(BaseService):
     def find_note_by_id(self, id: str) -> (Note | None):
         return next((note for note in self.notes if note.id == id), None)
 
-    @log_action
+    @log_command_action
     def add_note(self, data: dict) -> None:
         new_note: Note = Note.from_dict(data)
         if not new_note.is_valid():
             return
         self.notes.append(new_note)
         self.save()
-    
-    @log_action
+
+    @log_command_action
     def edit_note(self, index: int, data: dict) -> None:
         updated_note: Note = Note.from_dict(data)
         if not updated_note.is_valid():
@@ -26,11 +26,11 @@ class NotesService(BaseService):
         self.notes[index] = updated_note
         self.save()
 
-    @log_action
+    @log_command_action
     def delete_note(self, index: int) -> None:
         self.notes.pop(index)
         self.save()
-    
+
     def get_notes_table_data(self, search_term: str, sort_desc: bool = False) -> list:
         table_data: list[tuple[list[str], int]] = []
         for i, note in enumerate(self.notes):
@@ -48,6 +48,6 @@ class NotesService(BaseService):
 
     def save(self) -> None:
         self.storage.save([c.to_dict() for c in self.notes])
-    
+
     def reload(self) -> None:
         self.notes = [Note.from_dict(n) for n in self.storage.load()]
