@@ -77,7 +77,8 @@ class ContactForm(BaseForm):
             )
             self._clear_edit()
         except ValueError as e:
-            logging.error(e)
+            logging.error("Cannot save Contact")
+            logging.exception(e)
             self.scene.add_effect(
                 PopUpDialog(self._screen, f"❌ Помилка: {str(e)}", ["Спробувати ще раз"])
             )
