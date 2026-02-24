@@ -19,7 +19,7 @@ class BaseModel(ABC):
         return not has_errors
 
     def to_dict(self) -> dict:
-        """Перетворює модель у словник, придатний для JSON"""
+        """Перетворює модель у словник, придатний для JSON серіалізатора"""
         data: dict = asdict(self)
         data['id'] = str(self.id)
         return data
