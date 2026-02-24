@@ -75,7 +75,7 @@ class ContactForm(BaseForm):
                                               ["Чудово"], 
                                               on_close=lambda _: self._handle_saved())
             )
-            self._clear_edit()
+            self._clear_edit_index()
         except ValueError as e:
             logging.error("Cannot save Contact")
             logging.exception(e)
@@ -84,6 +84,6 @@ class ContactForm(BaseForm):
             )
     
     def _cancel(self) -> None:
-        self._clear_edit()
+        self._clear_edit_index()
         SceneFactory.next(SceneType.CONTACTS_GRID)
 

@@ -61,7 +61,7 @@ class NoteForm(BaseForm):
                                               ["Чудово"], 
                                               on_close=lambda _: self._handle_saved())
             )
-            self._clear_edit()
+            self._clear_edit_index()
         except ValueError as e:
             logging.error("Cannot save Note")
             logging.exception(e)
@@ -70,6 +70,6 @@ class NoteForm(BaseForm):
             )
     
     def _cancel(self) -> None:
-        self._clear_edit()
+        self._clear_edit_index()
         SceneFactory.next(SceneType.NOTES_GRID)
 

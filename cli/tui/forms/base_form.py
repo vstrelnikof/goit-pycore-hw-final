@@ -62,13 +62,13 @@ class BaseForm(BaseFrame):
 
         return not has_errors
     
-    def _clear_edit(self):
+    def _clear_edit_index(self):
         self._state.edit_index = None
 
     def _ok(self) -> None:
-        self._clear_edit()
         self.save()
+        self._clear_edit_index()
 
     def _cancel(self) -> None:
-        self._clear_edit()
+        self._clear_edit_index()
         SceneFactory.next(SceneType.MAIN)
