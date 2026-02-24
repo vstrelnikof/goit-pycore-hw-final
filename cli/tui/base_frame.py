@@ -28,7 +28,6 @@ class BaseFrame(Frame):
         """Глобальний обробник подій із периферійних пристроїв"""
         if isinstance(event, KeyboardEvent):
             if event.key_code == -1:
-                self._edit_index = None
                 self._state.edit_index = None
                 raise NextScene(self._esc_key_path)
         
