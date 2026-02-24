@@ -6,6 +6,8 @@ from cli.tui.views.base_grid_view import BaseGridView
 from factories.scene_factory import SceneFactory
 
 class NoteGridView(BaseGridView):
+    """Клас-представлення таблиці нотаток"""
+
     _is_search_enabled: bool = False
     _is_create_enabled: bool = True
     _is_update_enabled: bool = True
@@ -28,13 +30,12 @@ class NoteGridView(BaseGridView):
             height=self.screen.height - 5,
             columns=["^70%", "<30%"],
             titles=["Зміст нотатки", "🏷 Теги"],
-            options=[], # Спочатку порожній, заповниться в _filter_list
+            options=[],
             on_select=self._on_edit
         )
         list_layout.add_widget(self._list_box)
 
     def _filter_list(self):
-        """Фільтрація та сортування списку нотаток на основі тексту в пошуку."""
         search_term = self._search_box.value.lower() \
             if self._search_box.value else ""
         is_sort_checked: bool = self._sort_check_box.value

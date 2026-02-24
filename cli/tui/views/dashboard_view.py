@@ -9,6 +9,8 @@ from cli.tui.base_frame import BaseFrame
 from factories.scene_factory import SceneFactory
 
 class DashboardView(BaseFrame):
+    """Клас-представлення головного дешборду"""
+
     _birthdays: list[str]
 
     def __init__(self, screen: Screen, state: AppState) -> None:
@@ -80,7 +82,7 @@ class DashboardView(BaseFrame):
         return super().process_event(event)
     
     def reset(self) -> None:
-        # Цей метод викликається автоматично щоразу при переході на цю сцену!
+        """Метод Frame. Викликається автоматично щоразу при переході на сцену."""
         super().reset()
         self._birthday_text_box.value = '\n'.join(self._state.address_book_manager \
             .get_dashboard_birthdays())

@@ -6,6 +6,8 @@ from cli.tui.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 
 class ContactGridView(BaseGridView):
+    """Клас-представлення таблиці контактів"""
+
     _is_create_enabled: bool = True
     _is_update_enabled: bool = True
     _is_delete_enabled: bool = True
@@ -22,13 +24,12 @@ class ContactGridView(BaseGridView):
             height=self.screen.height - 5,
             columns=["<25%", "<20%", "<20%", "<20%", "<15%"],
             titles=["👤 Ім'я", "📱 Телефон", "📧 Email", "🏠 Адреса", "🎂 Дата"],
-            options=[], # Спочатку порожній, заповниться в _filter_list
+            options=[],
             on_select=self._on_edit
         )
         list_layout.add_widget(self._list_box)
 
     def _filter_list(self):
-        """Фільтрація списку контактів на основі тексту в пошуку."""
         search_term = self._search_box.value.lower() \
             if self._search_box.value else ""
         self._list_box.options = self._state.address_book_manager \

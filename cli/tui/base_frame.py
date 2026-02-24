@@ -6,7 +6,8 @@ from asciimatics.exceptions import NextScene
 from cli.tui.scene_type import SceneType
 
 class BaseFrame(Frame):
-    """Архі-клас для реалізації вікон"""
+    """Архі-клас для реалізації вікон (фреймів)"""
+
     _exit_key_codes: list[int] = [ord('q'), ord('Q'), ord('й'), ord('Й')]
     _esc_key_path: str = SceneType.MAIN
 

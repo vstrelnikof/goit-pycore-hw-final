@@ -6,6 +6,8 @@ from utils.validator import Validator
 from helpers.date_helpers import days_left_in_year
 
 class BirthdayGridView(BaseGridView):
+    """Клас-представлення таблиці днів народження"""
+
     _is_search_enabled = False
 
     def __init__(self, screen: Screen, state: AppState):
@@ -34,7 +36,6 @@ class BirthdayGridView(BaseGridView):
         list_layout.add_widget(self._list_box)
 
     def _filter_list(self):
-        """Фільтрація списку днів народження на основі вводу."""
         days_to_show: int | None = int(self._search_box.value) \
             if self._search_box.value.isnumeric() else days_left_in_year()
         self._list_box.options = self._state.address_book_manager \

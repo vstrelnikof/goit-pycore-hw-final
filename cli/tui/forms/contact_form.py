@@ -9,6 +9,8 @@ from factories.scene_factory import SceneFactory
 from models.contact import Contact
 
 class ContactForm(BaseForm):
+    """Клас форми створення/редагування контакту"""
+
     _esc_key_path: str = SceneType.CONTACTS_GRID
 
     def __init__(self, screen: Screen, state: AppState):

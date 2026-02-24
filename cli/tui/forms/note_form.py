@@ -8,6 +8,8 @@ from factories.scene_factory import SceneFactory
 from models.note import Note
 
 class NoteForm(BaseForm):
+    """Клас форми створення/редагування нататки"""
+
     _esc_key_path: str = SceneType.NOTES_GRID
 
     def __init__(self, screen: Screen, state: AppState):
