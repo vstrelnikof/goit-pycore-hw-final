@@ -27,15 +27,15 @@ class NoteForm(BaseForm):
     
     def reset(self) -> None:
         super().reset()
-        self.title = "📝 Нова нотатка" \
-            if self._state.edit_index is None else "📝 Редагування нотатки"
-        if self._edit_index is not None:
-            note: Note = self._state.notes_manager.notes[self._edit_index]
+        if self._state.edit_index is not None:
+            self.title = "📝 Редагування нотатки"
+            note: Note = self._state.notes_manager.notes[self._state.edit_index]
             self.data = {
                 "text": note.text,
                 "tags": note.tags_string
             }
         else:
+            self.title = "📝 Нова нотатка"
             self.data = {
                 "text": "", "tags": ""
             }
@@ -52,10 +52,10 @@ class NoteForm(BaseForm):
             return
 
         try:
-            if self._edit_index is None:
+            if self._state.edit_index is None:
                 self._state.notes_manager.add_note(self.data)
             else:
-                self._state.notes_manager.edit_note(self._edit_index, self.data)
+                self._state.notes_manager.edit_note(self._state.edit_index, self.data)
             self.scene.add_effect(PopUpDialog(self._screen,
                                               "✅ Нотатку успішно збережено!",
                                               ["Чудово"], 

@@ -10,7 +10,6 @@ class BaseForm(BaseFrame):
     """Архі-клас для реалізації модальних вікон із формою та елементами управління"""
 
     _required_fields: list[str] = []
-    _edit_index: int | None = None
 
     def __init__(self, screen: Screen, state: AppState, **kwargs) -> None:
         super().__init__(screen, state,
@@ -37,7 +36,6 @@ class BaseForm(BaseFrame):
     def reset(self) -> None:
         """Метод Frame. Викликається автоматично щоразу при переході на сцену."""
         super().reset()
-        self._edit_index = self._state.edit_index
 
     def _validate_form(self) -> bool:
         assert self.scene is not None
@@ -65,7 +63,6 @@ class BaseForm(BaseFrame):
         return not has_errors
     
     def _clear_edit(self):
-        self._edit_index = None
         self._state.edit_index = None
 
     def _ok(self) -> None:

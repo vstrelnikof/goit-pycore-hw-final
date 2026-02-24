@@ -38,10 +38,9 @@ class ContactForm(BaseForm):
     
     def reset(self) -> None:
         super().reset()
-        self.title = "👤 Новий контакт" \
-            if self._state.edit_index is None else "👤 Редагування контакту"
-        if self._edit_index is not None:
-            contact: Contact = self._state.address_book_manager.contacts[self._edit_index]
+        if self._state.edit_index is not None:
+            self.title = "👤 Редагування контакту"
+            contact: Contact = self._state.address_book_manager.contacts[self._state.edit_index]
             self.data = {
                 "name": contact.name,
                 "phone": contact.phone,
@@ -50,6 +49,7 @@ class ContactForm(BaseForm):
                 "birthday": contact.birthday
             }
         else:
+            self.title = "👤 Новий контакт"
             self.data = {
                 "name": "", "phone": "", "email": "", "address": "", "birthday": ""
             }
@@ -66,10 +66,10 @@ class ContactForm(BaseForm):
             return
 
         try:
-            if self._edit_index is None:
+            if self._state.edit_index is None:
                 self._state.address_book_manager.add_contact(self.data)
             else:
-                self._state.address_book_manager.edit_contact(self._edit_index, self.data)
+                self._state.address_book_manager.edit_contact(self._state.edit_index, self.data)
             self.scene.add_effect(PopUpDialog(self._screen,
                                               f"✅ Контакт \"{self.data["name"]}\" успішно збережено!",
                                               ["Чудово"], 
