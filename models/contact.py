@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import final
-from uuid import UUID
 from helpers.date_helpers import replace_date_year
 from models.base_model import BaseModel
 from utils.validator import Validator
@@ -35,20 +34,19 @@ class Contact(BaseModel):
         contact_birthday: date | None = self.birthday_date
         if not contact_birthday:
             return None
-        this_year_birthday = replace_date_year(contact_birthday, today.year)
-        next_birthday = replace_date_year(this_year_birthday, today.year + 1) \
+        this_year_birthday: date = replace_date_year(contact_birthday, today.year)
+        next_birthday: date = replace_date_year(this_year_birthday, today.year + 1) \
             if this_year_birthday < today else this_year_birthday
         return next_birthday
 
     def __str__(self):
         return f"{self.name.ljust(15)} | 📱 {self.phone} | 🎂 {self.birthday}"
-
+    
     @classmethod
-    def from_dict(cls, data: dict):
-        if isinstance(data.get("id"), str):
-            data["id"] = UUID(data["id"])
+    def _transform_form_data(cls, data: dict) -> dict:
+        data = super()._transform_form_data(data)
         birthday = data.get("birthday")
-        if isinstance(birthday, str) and bool(birthday):
-            data["birthday"] = datetime.strptime(birthday, "%Y-%m-%d") \
-            .date().isoformat()
-        return cls(**data)
+        if isinstance(birthday, str) and birthday:
+            data["birthday"] = datetime.strptime(birthday, "%Y-%m-%d").date().isoformat()
+        return data
+

@@ -19,15 +19,10 @@ class NoteForm(BaseForm):
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Label("Формат тегів: список через кому"))
-
         layout.add_widget(Divider())
-
         layout.add_widget(TextBox(10, label="Текст*:", name="text", as_string=True))
-
         layout.add_widget(Divider())
-        
         layout.add_widget(Text("Теги:", name="tags"))
-
         layout.add_widget(Divider())
     
     def reset(self) -> None:
