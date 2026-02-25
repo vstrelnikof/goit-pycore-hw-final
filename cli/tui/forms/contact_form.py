@@ -78,11 +78,13 @@ class ContactForm(BaseForm):
                                               on_close=lambda _: self._handle_saved())
             )
             self._clear_edit_index()
-        except ValueError as e:
+        except Exception as e:
             logging.error("Cannot save Contact")
             logging.exception(e)
             self.scene.add_effect(
-                PopUpDialog(self._screen, f"❌ Помилка: {str(e)}", ["Спробувати ще раз"])
+                PopUpDialog(self._screen,
+                            "❌ Помилка збереження Контакту",
+                            ["Спробувати ще раз"])
             )
     
     def _cancel(self) -> None:
