@@ -9,9 +9,9 @@ class SceneFactory:
     """Фабрика для створення сцен asciimatics"""
 
     @staticmethod
-    def next(name: str):
-        """Статичний метод який створює сцену по імені"""
-        raise NextScene(name)
+    def next(scene_type: SceneType):
+        """Статичний метод який створює сцену по типу"""
+        raise NextScene(scene_type)
 
     @staticmethod
     def createScenes(frames: dict[SceneType, BaseFrame]) -> list[Scene]:
