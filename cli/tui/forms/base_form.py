@@ -42,7 +42,7 @@ class BaseForm(BaseFrame):
         assert self.data is not None
 
         errors: list[str] = []
-        for field_name, _ in self.data.items():
+        for field_name in self.data.keys():
             widget: Widget | None = self.find_widget(field_name)
 
             if not widget:
