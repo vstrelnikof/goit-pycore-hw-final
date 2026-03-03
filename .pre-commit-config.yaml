@@ -1,4 +1,4 @@
-# Git hooks (аналог Husky): перевірки перед commit та push.
+# Git hooks: перевірки перед commit та push.
 # Документація: docs/development.md
 
 default_stages: [pre-commit, pre-push]
