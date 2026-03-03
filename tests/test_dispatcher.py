@@ -67,3 +67,15 @@ def test_run_contacts_returns_table_or_empty(app_state: AppState) -> None:
     assert isinstance(result, str) and len(result) > 0
     # Повертається або таблиця (є цифра індексу або переноси рядків), або текст повідомлення
     assert "\n" in result or "0" in result or "1" in result
+
+def test_run_notes_show_returns_full_note_or_error(app_state: AppState) -> None:
+    d = CommandDispatcher(app_state)
+    # Очищаємо нотатки, щоб індекс 0 спочатку не існував
+    app_state.notes_manager.notes.clear()
+    result = d.run("notes", ["show", "0"])
+    assert "Нотатку з таким індексом не знайдено" in result
+    # Додаємо нотатку і переглядаємо
+    app_state.notes_manager.add_note({"text": "Тестова нотатка для перегляду.", "tags": "тест"})
+    result = d.run("notes", ["show", "0"])
+    assert "Тестова нотатка для перегляду" in result
+    assert "тест" in result

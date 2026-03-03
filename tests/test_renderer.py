@@ -25,3 +25,19 @@ def test_format_birthdays_table_empty_returns_message() -> None:
     r = Renderer()
     out = r.format_birthdays_table([])
     assert "іменинників" in out or "період" in out
+
+def test_format_note_full_includes_text_and_tags() -> None:
+    from models.note import Note
+    r = Renderer()
+    note = Note(text="Повний текст нотатки з кількома словами.", tags=["важливо", "робота"])
+    out = r.format_note_full(note)
+    assert "Повний текст нотатки" in out
+    assert "важливо" in out and "робота" in out
+    assert "Теги" in out
+
+def test_format_note_full_without_tags() -> None:
+    from models.note import Note
+    r = Renderer()
+    note = Note(text="Проста нотатка без тегів.")
+    out = r.format_note_full(note)
+    assert "Проста нотатка без тегів" in out

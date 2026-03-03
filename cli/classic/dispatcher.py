@@ -143,6 +143,8 @@ class CommandDispatcher:
                 return self._notes_list("")
             case ["add"]:
                 return self._notes_add()
+            case ["show", index_str]:
+                return self._notes_show(index_str)
             case ["edit", index_str]:
                 return self._notes_edit(index_str)
             case ["delete", index_str]:
@@ -153,6 +155,17 @@ class CommandDispatcher:
     def _notes_list(self, search_term: str) -> str:
         rows = self._state.notes_manager.get_notes_table_data(search_term)
         return self._renderer.format_notes_table(rows)
+
+    def _notes_show(self, index_str: str) -> str:
+        try:
+            index = int(index_str)
+        except ValueError:
+            return "⚠ Індекс має бути числом."
+        notes = self._state.notes_manager.notes
+        if index < 0 or index >= len(notes):
+            return "⚠ Нотатку з таким індексом не знайдено."
+        note = notes[index]
+        return self._renderer.format_note_full(note)
 
     def _notes_add(self) -> str:
         form = NoteConsoleForm()

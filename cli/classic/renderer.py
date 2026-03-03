@@ -1,5 +1,6 @@
 from typing import Literal
 from models.table_row import TableData, TableRow
+from models.note import Note
 from cli.classic.colors import Colors
 
 Align = Literal["<", ">"]
@@ -15,6 +16,7 @@ _COMMAND_MENU_LINES = [
     "",
     "  📝 notes [пошук]               — список нотаток",
     "  📝 notes add                   — додати нотатку",
+    "  📝 notes show <index>          — переглянути повний текст нотатки",
     "  📝 notes edit <index>          — редагувати нотатку",
     "  📝 notes delete <index>        — видалити нотатку",
     "",
@@ -110,6 +112,14 @@ class Renderer:
         return "\n".join(
             self._format_table(truncated_rows, col_widths, titles, aligns, show_index=True)
         )
+
+    def format_note_full(self, note: Note) -> str:
+        """Повний текст нотатки для перегляду (notes show <index>)."""
+        lines = [Colors.title("📝 Нотатка"), Colors.separator("-" * 50), note.text.strip()]
+        if note.tags:
+            lines.append("")
+            lines.append(Colors.dim(f"🏷 Теги: {note.tags_string}"))
+        return "\n".join(lines)
 
     def format_birthdays_table(self, rows: TableData) -> str:
         """Таблиця днів народження."""
