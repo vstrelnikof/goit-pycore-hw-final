@@ -37,7 +37,7 @@ class NoteConsoleForm:
         tags_prompt = (
             "🏷 Теги (через кому): "
             if not existing_tags
-            else f"🏷 Теги (через кому) [{existing_tags}]: "
+            else f"🏷 Теги (через кому) {existing_tags}: "
         )
         tags_str = input(Colors.accent(tags_prompt)).strip() or existing_tags
         return {"text": text, "tags": tags_str}
