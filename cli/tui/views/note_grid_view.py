@@ -45,6 +45,12 @@ class NoteGridView(BaseGridView):
             search_term, is_sort_checked
         )
         self._list_box.options = [row.to_tuple() for row in table_data]
+        # scroll_to_index does not exist in MultiColumnListBox.
+        # To emulate going to the top, set value to first index if any options exist.
+        if self._list_box.options:
+            self._list_box.value = self._list_box.options[0][1]
+        else:
+            self._list_box.value = None
 
     def _on_create(self) -> None:
         super()._on_create()
