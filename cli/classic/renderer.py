@@ -7,22 +7,22 @@ Align = Literal["<", ">"]
 
 # Спільний список рядків меню команд для дешборду та help.
 _COMMAND_MENU_LINES = [
-    "  🏠 dashboard / stats           — головний дешборд",
+    "  🏠 dashboard / stats       — головний дешборд",
     "",
-    "  👥 contacts [пошук]            — список контактів",
-    "     contacts add                — додати контакт",
-    "     contacts edit <index>       — редагувати контакт",
-    "     contacts delete <index>     — видалити контакт",
+    "  👥 contacts [пошук]        — список контактів",
+    "     contacts add            — додати контакт",
+    "     contacts edit <index>   — редагувати контакт по індексу",
+    "     contacts delete <index> — видалити контакт по індексу",
     "",
-    "  📝 notes [пошук]               — список нотаток",
-    "     notes add                   — додати нотатку",
-    "     notes show <index>          — переглянути повний текст нотатки",
-    "     notes edit <index>          — редагувати нотатку",
-    "     notes delete <index>        — видалити нотатку",
+    "  📝 notes [пошук]           — список нотаток",
+    "     notes add               — додати нотатку",
+    "     notes show <index>      — переглянути повний текст нотатки",
+    "     notes edit <index>      — редагувати нотатку по індексу",
+    "     notes delete <index>    — видалити нотатку по індексу",
     "",
-    "  🎂 birthdays [днів]            — іменинники на N днів",
-    "  ❓ help                        — детальна довідка",
-    "  👋 exit / quit                 — вихід",
+    "  🎂 birthdays [днів]        — іменинники на N днів",
+    "  ❓ help                    — детальна довідка",
+    "  👋 exit / quit             — вихід",
 ]
 
 class Renderer:
