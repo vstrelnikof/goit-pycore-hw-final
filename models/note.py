@@ -17,7 +17,7 @@ class Note(BaseModel):
             "text": bool(self.text.strip()),
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         tags_str: str = ", ".join(self.tags) if self.tags else "без тегів"
         return f"Нотатка: {self.text} | Теги: {tags_str}"
 

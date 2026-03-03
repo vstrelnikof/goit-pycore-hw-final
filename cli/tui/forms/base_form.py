@@ -9,8 +9,6 @@ from factories.scene_factory import SceneFactory
 class BaseForm(BaseFrame):
     """Архі-клас для реалізації модальних вікон із формою та елементами управління"""
 
-    _required_fields: list[str] = []
-
     def __init__(self, screen: Screen, state: AppState, **kwargs) -> None:
         super().__init__(screen, state,
                          height=screen.height // 2,
@@ -28,6 +26,11 @@ class BaseForm(BaseFrame):
         layout.add_widget(Button("Скасувати (ESC)", self._cancel), 1)
         self.fix()
 
+    @property
+    def _required_fields(self) -> list[str]:
+        """Віртуальна властивість, реалізація якої вказує список обов'язкових полів"""
+        return []
+
     @abstractmethod
     def _render_content(self) -> None:
         """Абстрактний метод, реалізація якого має будувати розмітку основного блоку вікна"""
@@ -40,26 +43,20 @@ class BaseForm(BaseFrame):
     def _validate_form(self) -> bool:
         assert self.scene is not None
         assert self.data is not None
-
         errors: list[str] = []
         for field_name in self.data.keys():
             widget: Widget | None = self.find_widget(field_name)
-
             if not widget:
                 continue
-
             if field_name in self._required_fields and not widget.value:
                 errors.append(f"Поле '{widget.label}' є обов'язковим!")
             elif hasattr(widget, "is_valid") and not widget.is_valid:
                 errors.append(f"Поле '{widget.label}' заповнено некоректно!")
-
         has_errors = bool(errors)
-
         if has_errors:
             self.scene.add_effect(
                 PopUpDialog(self._screen, '\n'.join(errors), ["Виправити"])
             )
-
         return not has_errors
     
     def _clear_edit_index(self):

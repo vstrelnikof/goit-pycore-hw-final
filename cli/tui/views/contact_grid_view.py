@@ -43,9 +43,8 @@ class ContactGridView(BaseGridView):
         super()._on_edit()
         SceneFactory.next(SceneType.CONTACT_FORM)
 
-    def _confirm_delete(self, selected_button_idx):
-        # selected_button_idx == 0 відповідає кнопці "Так"
-        if selected_button_idx == 0:
+    def _confirm_delete(self, selected_button_idx: int) -> None:
+        if self._is_popup_confirmed(selected_button_idx):
             index = self._list_box.value
             if (index is None):
                 raise ValueError("selected_button_idx is None")

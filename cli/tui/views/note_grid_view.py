@@ -29,7 +29,7 @@ class NoteGridView(BaseGridView):
             name="notes_list",
             height=self.screen.height - 5,
             columns=["^70%", "<30%"],
-            titles=["Зміст нотатки", "🏷 Теги"],
+            titles=["📝 Зміст нотатки", "🔖 Теги"],
             options=[],
             on_select=self._on_edit
         )
@@ -50,9 +50,8 @@ class NoteGridView(BaseGridView):
         super()._on_edit()
         SceneFactory.next(SceneType.NOTE_FORM)
 
-    def _confirm_delete(self, selected_button_idx):
-        # selected_button_idx == 0 відповідає кнопці "Так"
-        if selected_button_idx == 0:
+    def _confirm_delete(self, selected_button_idx: int) -> None:
+        if self._is_popup_confirmed(selected_button_idx):
             index = self._list_box.value
             if (index is None):
                 raise ValueError("selected_button_idx is None")

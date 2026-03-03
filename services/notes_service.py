@@ -1,16 +1,16 @@
 from typing import final
-from decorators.log_decorator import log_command_action
+from decorators.log_command_action import log_command_action
 from models.note import Note
 from services.base_service import BaseService
 
 @final
 class NotesService(BaseService):
-    notes: list[Note]
+    """Сервіс для роботи з нотатками"""
 
     def find_note_by_id(self, id: str) -> (Note | None):
         return next((note for note in self.notes if note.id == id), None)
 
-    @log_command_action
+    @log_command_action()
     def add_note(self, data: dict) -> None:
         new_note: Note = Note.from_dict(data)
         if not new_note.is_valid():
@@ -18,7 +18,7 @@ class NotesService(BaseService):
         self.notes.append(new_note)
         self.save()
 
-    @log_command_action
+    @log_command_action()
     def edit_note(self, index: int, data: dict) -> None:
         updated_note: Note = Note.from_dict(data)
         if not updated_note.is_valid():
@@ -26,7 +26,7 @@ class NotesService(BaseService):
         self.notes[index] = updated_note
         self.save()
 
-    @log_command_action
+    @log_command_action()
     def delete_note(self, index: int) -> None:
         self.notes.pop(index)
         self.save()

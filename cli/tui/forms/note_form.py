@@ -10,14 +10,18 @@ from models.note import Note
 class NoteForm(BaseForm):
     """Клас форми створення/редагування нататки"""
 
-    _esc_key_path: str = SceneType.NOTES_GRID
+    @property
+    def _esc_key_path(self) -> SceneType:
+        return SceneType.NOTES_GRID
+
+    @property
+    def _required_fields(self) -> list[str]:
+        return ["text"]
 
     def __init__(self, screen: Screen, state: AppState):
         super().__init__(screen, state, can_scroll=False)
     
     def _render_content(self) -> None:
-        self._required_fields = ["text"]
-        
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Label("Формат тегів: список через кому"))

@@ -1,18 +1,18 @@
 from datetime import date, datetime
 from typing import final
-from decorators.log_decorator import log_command_action
+from decorators.log_command_action import log_command_action
 from models.contact import Contact
 from models.contact_birthday import ContactBirthday
 from services.base_service import BaseService
 
 @final
 class AddressBookService(BaseService):
-    contacts: list[Contact]
+    """Сервіс для роботи з адресною книгою"""
 
     def find_contact_by_id(self, id: str) -> (Contact | None):
         return next((contact for contact in self.contacts if contact.id == id), None)
 
-    @log_command_action
+    @log_command_action()
     def add_contact(self, data: dict) -> None:
         new_contact: Contact = Contact.from_dict(data)
         if not new_contact.is_valid():
@@ -20,7 +20,7 @@ class AddressBookService(BaseService):
         self.contacts.append(new_contact)
         self.save()
     
-    @log_command_action
+    @log_command_action()
     def edit_contact(self, index: int, data: dict) -> None:
         updated_contact: Contact = Contact.from_dict(data)
         if not updated_contact.is_valid():
@@ -28,7 +28,7 @@ class AddressBookService(BaseService):
         self.contacts[index] = updated_contact
         self.save()
 
-    @log_command_action
+    @log_command_action()
     def delete_contact(self, index: int) -> None:
         self.contacts.pop(index)
         self.save()

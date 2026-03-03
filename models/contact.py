@@ -39,7 +39,7 @@ class Contact(BaseModel):
             if this_year_birthday < today else this_year_birthday
         return next_birthday
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name.ljust(15)} | 📱 {self.phone} | 🎂 {self.birthday}"
     
     @classmethod

@@ -29,6 +29,11 @@ class BaseModel(ABC):
         """Абстрактний метод для реалізації перевірки відповідної моделі даних"""
         pass
 
+    def __repr__(self) -> str:
+        cls_name: str = self.__class__.__name__
+        field_strings: list[str] = [f"{k}={v!r}" for k, v in self.__dict__]
+        return f"{cls_name}({', '.join(field_strings)})"
+
     @final
     @classmethod
     def from_dict(cls, data: dict):

@@ -62,13 +62,13 @@ class BaseGridView(BaseFrame):
         self.scene.add_effect(
             PopUpDialog(
                 self._screen, 
-                "❓Ви впевнені, що хочете видалити запис?", 
+                "❓ Ви впевнені, що хочете видалити запис?", 
                 ["Так", "Ні"],
                 on_close=self._confirm_delete
             )
         )
     
-    def _confirm_delete(self, selected_button_idx) -> None:
+    def _confirm_delete(self, selected_button_idx: int) -> None:
         pass
 
     def _on_back(self) -> None:

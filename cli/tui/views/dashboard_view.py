@@ -11,26 +11,27 @@ from factories.scene_factory import SceneFactory
 class DashboardView(BaseFrame):
     """Клас-представлення головного дешборду"""
 
-    _birthdays: list[str]
-
     def __init__(self, screen: Screen, state: AppState) -> None:
         super().__init__(screen, state, title="📊 Personal Assistant")
-
-        # --- Верхня секція: Статистика ---
+        self._render_stats()
+        self._render_divider()
+        self._render_menu()
+        self._render_footer()
+        self.fix()
+        self._birthday_text_box.disabled = True
+        self._menu_list_box.focus()
+    
+    def _render_stats(self) -> None:
+        """Верхня секція: Статистика"""
         stats_layout = Layout([1, 1, 1])
         self.add_layout(stats_layout)
         stats = self._state.get_stats()
         stats_layout.add_widget(Label(f"👥 Контактів: {stats['contacts']}"), 0)
         stats_layout.add_widget(Label(f"📝 Нотаток: {stats['notes']}"), 1)
         stats_layout.add_widget(Label(f"📅 Сьогодні: {datetime.now().strftime('%d.%m.%Y')}"), 2)
-        
-        self.add_layout(Layout([1])) # Проміжний шар
-
-        divider_layout = Layout([1])
-        self.add_layout(divider_layout)
-        divider_layout.add_widget(Divider())
-
-        # --- Середня секція: Нагадування та Меню ---
+    
+    def _render_menu(self) -> None:
+        """Середня секція: Нагадування та Меню"""
         main_layout = Layout([1, 1], fill_frame=True)
         self.add_layout(main_layout)
 
@@ -61,18 +62,15 @@ class DashboardView(BaseFrame):
         self._menu_list_box = ListBox(len(menu_list_box_options),
                                       menu_list_box_options,
                                       name="menu",
-                                      on_select=self._on_click)
+                                      on_select=self._on_navigate)
         main_layout.add_widget(self._menu_list_box, 1)
-
-        # --- Нижня секція: Кнопка дії ---
+    
+    def _render_footer(self) -> None:
+        """Нижня секція: Кнопка дії"""
         footer = Layout([1])
         self.add_layout(footer)
         footer.add_widget(Divider())
-        footer.add_widget(Button("ПЕРЕЙТИ", self._on_click))
-        
-        self.fix()
-        self._birthday_text_box.disabled = True
-        self._menu_list_box.focus()
+        footer.add_widget(Button("ПЕРЕЙТИ", self._on_navigate))
     
     def process_event(self, event) -> None:
         if isinstance(event, KeyboardEvent):
@@ -87,7 +85,8 @@ class DashboardView(BaseFrame):
         self._birthday_text_box.value = '\n'.join(self._state.address_book_manager \
             .get_dashboard_birthdays())
 
-    def _on_click(self) -> None:
+    def _on_navigate(self) -> None:
+        """Метод обробки навігації по дешборду"""
         sceneOrExit = self._menu_list_box.value
         if sceneOrExit == 0:
             raise StopApplication("User quit via menu")
