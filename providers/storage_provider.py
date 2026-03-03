@@ -31,7 +31,7 @@ class StorageProvider:
         except Exception as e:
             logger.error(f"Error reading file: {e}")
 
-    @log_action(level=logging.DEBUG, log_time=True)
+    @log_action(log_time=True)
     def save(self, data: Any) -> None:
         """Збереження будь-якої структури в JSON файл"""
         try:
