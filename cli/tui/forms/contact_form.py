@@ -50,11 +50,11 @@ class ContactForm(BaseForm):
                 "address": contact.address,
                 "birthday": contact.birthday
             }
-        else:
-            self.title = "👤 Новий контакт"
-            self.data = {
-                "name": "", "phone": "", "email": "", "address": "", "birthday": ""
-            }
+            return
+        self.title = "👤 Новий контакт"
+        self.data = {
+            "name": "", "phone": "", "email": "", "address": "", "birthday": ""
+        }
     
     def _handle_saved(self):
         super().reset()

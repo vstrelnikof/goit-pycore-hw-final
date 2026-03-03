@@ -40,11 +40,11 @@ class NoteForm(BaseForm):
                 "text": note.text,
                 "tags": note.tags_string
             }
-        else:
-            self.title = "📝 Нова нотатка"
-            self.data = {
-                "text": "", "tags": ""
-            }
+            return
+        self.title = "📝 Нова нотатка"
+        self.data = {
+            "text": "", "tags": ""
+        }
     
     def _handle_saved(self):
         super().reset()
