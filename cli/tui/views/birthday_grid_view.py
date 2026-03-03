@@ -38,5 +38,6 @@ class BirthdayGridView(BaseGridView):
     def _filter_list(self):
         days_to_show: int | None = int(self._search_box.value) \
             if self._search_box.value.isnumeric() else days_left_in_year()
-        self._list_box.options = self._state.address_book_manager \
+        table_data = self._state.address_book_manager \
             .get_birthdays_table_data(days_to_show)
+        self._list_box.options = [row.to_tuple() for row in table_data]

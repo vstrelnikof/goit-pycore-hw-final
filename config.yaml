@@ -10,6 +10,7 @@ app:
   log_level: 20
   # default/monochrome/green/bright
   theme: "default"
+  classic: false
   app_data_paths:
     address_book: data/contacts.json
     notes: data/notes.json

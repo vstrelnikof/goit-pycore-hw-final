@@ -39,8 +39,9 @@ class NoteGridView(BaseGridView):
         search_term = self._search_box.value.lower() \
             if self._search_box.value else ""
         is_sort_checked: bool = self._sort_check_box.value
-        self._list_box.options = self._state.notes_manager \
+        table_data = self._state.notes_manager \
             .get_notes_table_data(search_term, is_sort_checked)
+        self._list_box.options = [row.to_tuple() for row in table_data]
     
     def _on_create(self) -> None:
         super()._on_create()

@@ -1,3 +1,4 @@
+import argparse
 import logging
 import yaml
 from argparse import ArgumentParser, Namespace as ArgsNamespace
@@ -35,6 +36,8 @@ class ConfigProvider:
         parser = ArgumentParser(description="Personal assistant configuration")
         parser.add_argument("--theme", type=str, help="Personal assistant theme")
         parser.add_argument("--log-level", type=int, help="Logging level")
+        parser.add_argument("--classic", action="store_true", default=argparse.SUPPRESS,
+                           help="Run in classic console mode (no asciimatics)")
         args = parser.parse_args()
         return args
     

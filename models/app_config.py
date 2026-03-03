@@ -10,3 +10,4 @@ class AppConfig(BaseModel):
     log_level: int = logging.INFO
     theme: ThemeType = ThemeType.DEFAULT
     app_data_paths: AppDataPaths = AppDataPaths()
+    classic: bool = False

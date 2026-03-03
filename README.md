@@ -1,47 +1,56 @@
-## Персональний помічник
+# 📒 Персональний помічник
 
-Встановлення:
-```
+Консольний застосунок для керування контактами та нотатками: два режими інтерфейсу (TUI на asciimatics і класичний консольний), збереження даних у JSON, валідація полів і підказки команд.
+
+## 🖥️ Режими роботи
+
+| Режим | Запуск | Опис |
+|-------|--------|------|
+| **🖥️ TUI** | `python main.py` | Інтерактивний інтерфейс (asciimatics): дешборд, форми, таблиці. |
+| **⌨️ Classic** | `python main.py --classic` або `classic: true` у config | Консольний цикл: команди вводяться з клавіатури, вивід у консоль з кольорами. |
+
+Детально про кожен режим — у розділах [TUI](docs/tui.md) та [Classic](docs/classic.md).
+
+## 🚀 Швидкий старт
+
+```bash
 git clone https://github.com/vstrelnikof/goit-pycore-hw-final.git
 cd goit-pycore-hw-final
 python -m venv .venv
-./.venv/Scripts/activate # Per OS
-python -m pip install -r requirements.txt
+# Windows:
+.venv\Scripts\activate
+# Linux/macOS:
+# source .venv/bin/activate
+pip install -r requirements.txt
 python main.py
 ```
 
-## 🖼 TUI (terminal user interface)
-### 📊 Дешборд
-![Дешборд](./static/screenshots/1.jpg)
+Для класичного режиму:
 
-### 🔍 Пошук та Управління Контактами
-![Контакти](./static/screenshots/2.jpg)
+```bash
+python main.py --classic
+```
 
-### 👤 Форма редагування Контакту
-![Форма](./static/screenshots/3.jpg)
+Повна інструкція з встановлення — [docs/installation.md](docs/installation.md).
 
-## 🛠️ Функціональні можливості
-### 📇 Контакти
-- Додавання нових контактів (ім’я, телефон, email, адреса, день народження).
-- Пошук контактів за ім’ям.
-- Редагування та видалення контактів.
-- Перевірка правильності телефону та email.
-- Виведення списку контактів, у яких день народження через задану кількість днів.
-### 📝 Нотатки
-- Додавання текстових нотаток.
-- Додавання тегів до нотаток.
-- Пошук нотаток за текстом або тегами.
-- Редагування та видалення нотаток.
-- Сортування за тегами.
+## ✨ Функціональність
 
-### 📂 Збереження даних
-- Контакти зберігаються у файлі data/contacts.json.
-- Нотатки зберігаються у файлі data/notes.json.
-- Дані не втрачаються після перезапуску програми.
+- **📇 Контакти**: додавання, пошук, редагування, видалення; поля: ім'я, телефон (+380...), email, адреса, день народження; валідація та список днів народження на N днів.
+- **📝 Нотатки**: текст і теги; пошук за текстом/тегами; сортування за тегами; CRUD.
+- **💾 Збереження**: контакти — `data/contacts.json`, нотатки — `data/notes.json` (шляхи налаштовуються в [config.yaml](config.yaml)).
 
-### 📐 Технічні особливості
-- Використання TUI (terminal user interface) за допомогою asciimatics.
-- Використання ООП (класи BaseModel, Contact, Note, BaseService, AddressBookService, NotesService).
-- Валідація для телефону, email та дат.
-- Сучасний синтаксис Python (dataclasses, match-case, pathlib).
-- Код відповідає стандартам PEP 8.
+## ⚙️ Конфігурація
+
+Файл [config.yaml](config.yaml) та аргументи CLI (`--theme`, `--log-level`, `--classic`). Детально — [docs/configuration.md](docs/configuration.md).
+
+## 📚 Документація
+
+- 📦 [Встановлення](docs/installation.md)
+- 🖥️ [TUI (інтерфейс asciimatics)](docs/tui.md)
+- ⌨️ [Classic (консольний режим)](docs/classic.md)
+- ⚙️ [Конфігурація](docs/configuration.md)
+- 🧪 [Розробка та тести](docs/development.md)
+
+## 📄 Ліцензія
+
+Навчальний проєкт (GOIT Python Core).

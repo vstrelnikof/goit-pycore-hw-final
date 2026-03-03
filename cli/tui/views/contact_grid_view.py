@@ -32,8 +32,9 @@ class ContactGridView(BaseGridView):
     def _filter_list(self):
         search_term = self._search_box.value.lower() \
             if self._search_box.value else ""
-        self._list_box.options = self._state.address_book_manager \
+        table_data = self._state.address_book_manager \
             .get_contacts_table_data(search_term)
+        self._list_box.options = [row.to_tuple() for row in table_data]
     
     def _on_create(self) -> None:
         super()._on_create()
