@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Generator, List, Union
+from typing import Any, Generator
 from decorators.log_action import log_action
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class StorageProvider:
         """Генератор для построчного читання масиву з JSON файлу"""
         try:
             with self.file.open("r", encoding=self.file_encoding) as f:
-                data: Union[List[Any], Any] = json.load(f)
+                data: list[Any] | Any = json.load(f)
                 if isinstance(data, list):
                     for item in data:
                         yield item
