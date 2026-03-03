@@ -68,3 +68,36 @@ def test_load_classic_from_config_file(
     monkeypatch.setattr("sys.argv", ["pytest"])
     app_config = ConfigProvider.load(config_path)
     assert app_config.classic is True
+
+
+def test_load_create_fakes_from_args(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        "app:\n  log_level: 20\n  app_data_paths:\n    address_book: data/c.json\n    notes: data/n.json\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "sys.argv",
+        ["main.py", "--create-fakes-contacts", "3", "--create-fakes-notes", "5"],
+    )
+    app_config = ConfigProvider.load(config_path)
+    assert app_config.create_fakes_contacts == 3
+    assert app_config.create_fakes_notes == 5
+
+
+def test_create_fakes_default_zero_when_no_args(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        "app:\n  app_data_paths:\n    address_book: data/c.json\n    notes: data/n.json\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("sys.argv", ["pytest"])
+    app_config = ConfigProvider.load(config_path)
+    assert app_config.create_fakes_contacts == 0
+    assert app_config.create_fakes_notes == 0

@@ -35,6 +35,15 @@ logger = logging.getLogger(__name__)
 # Контейнер стану застосунку
 app_state = AppState(app_config)
 
+if app_config.create_fakes_contacts or app_config.create_fakes_notes:
+    from utils.fake_data import create_fakes
+
+    create_fakes(
+        app_state,
+        contacts_count=app_config.create_fakes_contacts,
+        notes_count=app_config.create_fakes_notes,
+    )
+
 if app_config.classic:
     import colorama
 

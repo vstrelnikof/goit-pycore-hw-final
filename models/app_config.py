@@ -13,3 +13,5 @@ class AppConfig(BaseModel):
     theme: ThemeType = ThemeType.DEFAULT
     app_data_paths: AppDataPaths = AppDataPaths()
     classic: bool = False
+    create_fakes_contacts: int = 0
+    create_fakes_notes: int = 0

@@ -26,8 +26,16 @@ app:
 | Аргумент | Опис | Приклад |
 |----------|------|---------|
 | `--theme` | Тема TUI | `--theme green` |
-| `--log-level` | Рівень логування | `--log-level 10` |
+| `--log-level` | Рівень логування | `--log-level <number>` |
 | `--classic` | Увімкнути класичний режим | `--classic` |
+| `--create-fakes-contacts` | Згенерувати N фейкових контактів (uk_UA) перед стартом | `--create-fakes-contacts <number>` |
+| `--create-fakes-notes` | Згенерувати N фейкових нотаток (uk_UA) перед стартом | `--create-fakes-notes <number>` |
+
+Приклад запуску з попередньою генерацією даних
+
+```bash
+python main.py --create-fakes-contacts <number> --create-fakes-notes <number>
+```
 
 Приклад:
 

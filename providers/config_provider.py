@@ -12,14 +12,25 @@ class ConfigProvider:
     """Провайдер конфігурації застосунку через файл та через аргументи командного рядка"""
 
     @staticmethod
+    def __merge_args_into(base: dict, args_config: ArgsNamespace) -> dict:
+        """Доповнює base значеннями з аргументів (лише не-None)."""
+        for k, v in args_config.__dict__.items():
+            if v is not None:
+                base[k] = v
+        return base
+
+    @staticmethod
     def load(config_path: Path = Path("config.yaml")) -> AppConfig:
         """Фабричний метод який читає конфігурацію"""
         default_config = AppConfig()
+        args_config = ConfigProvider.__get_app_args()
         if not config_path.exists():
             logger.warning("Config file not found: %s", config_path)
-            return default_config
+            merged = ConfigProvider.__merge_args_into(
+                default_config.model_dump(), args_config
+            )
+            return AppConfig(**merged)
         try:
-            args_config = ConfigProvider.__get_app_args()
             with open(config_path, "r", encoding="utf-8") as f:
                 file_config = yaml.safe_load(f) or {}
                 merged_config = ConfigProvider.__get_merged_settings(
@@ -30,7 +41,10 @@ class ConfigProvider:
         except Exception as e:
             logger.error("Cannot create application config")
             logger.exception(e)
-            return default_config
+            merged = ConfigProvider.__merge_args_into(
+                default_config.model_dump(), args_config
+            )
+            return AppConfig(**merged)
 
     @staticmethod
     def __get_app_args() -> ArgsNamespace:
@@ -43,6 +57,20 @@ class ConfigProvider:
             action="store_true",
             default=argparse.SUPPRESS,
             help="Run in classic console mode",
+        )
+        parser.add_argument(
+            "--create-fakes-contacts",
+            type=int,
+            default=0,
+            metavar="N",
+            help="Generate N fake contacts (Ukrainian locale) before starting",
+        )
+        parser.add_argument(
+            "--create-fakes-notes",
+            type=int,
+            default=0,
+            metavar="N",
+            help="Generate N fake notes (Ukrainian locale) before starting",
         )
         args = parser.parse_args()
         return args
@@ -58,7 +86,4 @@ class ConfigProvider:
             if isinstance(app_section, dict)
             else default.model_dump()
         )
-        for k, v in args_config.__dict__.items():
-            if v is not None:
-                merged[k] = v
-        return merged
+        return ConfigProvider.__merge_args_into(merged, args_config)
