@@ -49,9 +49,17 @@ class CommandDispatcher:
     def run(self, cmd: str, args: list[str]) -> str | object:
         """Виконує команду та повертає рядок результату або EXIT_SENTINEL."""
         handler = self._handlers.get(cmd)
-        if handler is None:
-            return self.get_suggestion(cmd)
-        return handler(args)
+        if handler is not None:
+            return handler(args)
+
+        # Невідома команда: якщо є одна близька — виконуємо її
+        if cmd.strip():
+            known = list(self._handlers.keys())
+            matches = difflib.get_close_matches(cmd.strip().lower(), known, n=1, cutoff=0.4)
+            if len(matches) == 1:
+                return self._handlers[matches[0]](args)
+
+        return self.get_suggestion(cmd)
 
     def _handle_dashboard(self, args: list[str]) -> str:
         stats = self._state.get_stats()

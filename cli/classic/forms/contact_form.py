@@ -11,32 +11,69 @@ class ContactConsoleForm:
     def prompt(self) -> dict:
         data: dict = {}
 
-        name = input(Colors.accent("👤 Ім'я*: ")).strip() or self._existing.get("name", "")
+        # Ім'я
+        existing_name = self._existing.get("name", "")
+        name_prompt = (
+            "👤 Ім'я*: "
+            if not existing_name
+            else f"👤 Ім'я* [{existing_name}]: "
+        )
+        name = input(Colors.accent(name_prompt)).strip() or existing_name
         while not name:
             print(Colors.error("  ⚠ Поле обов'язкове."))
-            name = input(Colors.accent("👤 Ім'я*: ")).strip() or self._existing.get("name", "")
+            name = input(Colors.accent(name_prompt)).strip() or existing_name
         data["name"] = name
 
-        phone = input(Colors.accent("📞 Телефон (+380XXXXXXXXX): ")).strip() or self._existing.get("phone", "")
+        # Телефон
+        existing_phone = self._existing.get("phone", "")
+        phone_prompt = (
+            "📞 Телефон (+380XXXXXXXXX): "
+            if not existing_phone
+            else f"📞 Телефон (+380XXXXXXXXX) [{existing_phone}]: "
+        )
+        phone = input(Colors.accent(phone_prompt)).strip() or existing_phone
         while phone and not Validator.validate_phone(phone):
             print(Colors.error("  ⚠ Невірний формат. Приклад: +380501234567"))
-            phone = input(Colors.accent("📞 Телефон: ")).strip() or self._existing.get("phone", "")
+            phone = input(Colors.accent(phone_prompt)).strip() or existing_phone
         data["phone"] = phone
 
-        email = input(Colors.accent("✉ Email: ")).strip() or self._existing.get("email", "")
+        # Email
+        existing_email = self._existing.get("email", "")
+        email_prompt = (
+            "✉ Email: "
+            if not existing_email
+            else f"✉ Email [{existing_email}]: "
+        )
+        email = input(Colors.accent(email_prompt)).strip() or existing_email
         while email and not Validator.validate_email(email):
             print(Colors.error("  ⚠ Невірний формат email."))
-            email = input(Colors.accent("✉ Email: ")).strip() or self._existing.get("email", "")
+            email = input(Colors.accent(email_prompt)).strip() or existing_email
         data["email"] = email
 
-        data["address"] = input(Colors.accent("📍 Адреса: ")).strip() or self._existing.get("address", "")
+        # Адреса
+        existing_address = self._existing.get("address", "")
+        address_prompt = (
+            "📍 Адреса: "
+            if not existing_address
+            else f"📍 Адреса [{existing_address}]: "
+        )
+        data["address"] = input(Colors.accent(address_prompt)).strip() or existing_address
 
-        birthday = input(Colors.accent("🎂 День народження (YYYY-MM-DD): ")).strip() or self._existing.get("birthday", "")
-        if self._existing.get("birthday") and hasattr(self._existing["birthday"], "isoformat"):
-            birthday = birthday or self._existing["birthday"].isoformat()
+        # День народження
+        existing_birthday_raw = self._existing.get("birthday", "")
+        if existing_birthday_raw and hasattr(existing_birthday_raw, "isoformat"):
+            existing_birthday = existing_birthday_raw.isoformat()
+        else:
+            existing_birthday = existing_birthday_raw or ""
+        birthday_prompt = (
+            "🎂 День народження (YYYY-MM-DD): "
+            if not existing_birthday
+            else f"🎂 День народження (YYYY-MM-DD) [{existing_birthday}]: "
+        )
+        birthday = input(Colors.accent(birthday_prompt)).strip() or existing_birthday
         while birthday and not Validator.validate_date(birthday):
             print(Colors.error("  ⚠ Невірний формат дати. Приклад: 1990-05-15"))
-            birthday = input(Colors.accent("🎂 День народження: ")).strip() or self._existing.get("birthday", "")
+            birthday = input(Colors.accent(birthday_prompt)).strip() or existing_birthday
         data["birthday"] = birthday
 
         return data
