@@ -53,3 +53,22 @@ def test_format_note_full_without_tags() -> None:
     note = Note(text="Проста нотатка без тегів.")
     out = r.format_note_full(note)
     assert "Проста нотатка без тегів" in out
+
+
+def test_format_contacts_table_with_total_count_shows_footer() -> None:
+    r = Renderer()
+    data: TableData = [
+        TableRow(cells=["A", "1", "a@b.co", "", "1990-01-01"], index=0),
+        TableRow(cells=["B", "2", "b@b.co", "", "1991-01-01"], index=1),
+    ]
+    out = r.format_contacts_table(data, total_count=10)
+    assert "Показано 2 з 10" in out
+
+
+def test_format_notes_table_with_total_count_shows_footer() -> None:
+    r = Renderer()
+    data: TableData = [
+        TableRow(cells=["Текст", "tag1"], index=0),
+    ]
+    out = r.format_notes_table(data, total_count=5)
+    assert "Показано 1 з 5" in out

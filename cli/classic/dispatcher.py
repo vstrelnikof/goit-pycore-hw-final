@@ -82,7 +82,7 @@ class CommandDispatcher:
         normalized = [a.lower() for a in args] if args else []
         match normalized:
             case []:
-                return self._contacts_list("")
+                return self._contacts_list("", None)
             case ["add"]:
                 return self._contacts_add()
             case ["edit", index_str]:
@@ -90,10 +90,28 @@ class CommandDispatcher:
             case ["delete", index_str]:
                 return self._contacts_delete(index_str)
             case [_, *_]:
-                return self._contacts_list(args[0])
+                search, limit = self._parse_search_and_limit(args)
+                return self._contacts_list(search, limit)
 
-    def _contacts_list(self, search_term: str) -> str:
+    @staticmethod
+    def _parse_search_and_limit(args: list[str]) -> tuple[str, int | None]:
+        """Парсить аргументи списку: останній якщо число — ліміт рядків, решта — пошук."""
+        if not args:
+            return "", None
+        if len(args) == 1:
+            if args[0].isdigit() and int(args[0]) > 0:
+                return "", int(args[0])
+            return args[0], None
+        if args[-1].isdigit() and int(args[-1]) > 0:
+            return " ".join(args[:-1]).strip(), int(args[-1])
+        return " ".join(args), None
+
+    def _contacts_list(self, search_term: str, limit: int | None) -> str:
         rows = self._state.address_book_manager.get_contacts_table_data(search_term)
+        if limit is not None and limit > 0 and len(rows) > limit:
+            total = len(rows)
+            rows = rows[:limit]
+            return self._renderer.format_contacts_table(rows, total_count=total)
         return self._renderer.format_contacts_table(rows)
 
     def _contacts_add(self) -> str:
@@ -101,7 +119,7 @@ class CommandDispatcher:
         data = form.prompt()
         self._state.address_book_manager.add_contact(data)
         # Після додавання показуємо оновлений список
-        return self._contacts_list("")
+        return self._contacts_list("", None)
 
     def _contacts_edit(self, index_str: str) -> str:
         try:
@@ -126,7 +144,7 @@ class CommandDispatcher:
         form = ContactConsoleForm(existing=existing_data)
         data = form.prompt()
         self._state.address_book_manager.edit_contact(index, data)
-        return self._contacts_list("")
+        return self._contacts_list("", None)
 
     def _contacts_delete(self, index_str: str) -> str:
         try:
@@ -139,13 +157,13 @@ class CommandDispatcher:
             return "⚠ Контакт з таким індексом не знайдено."
 
         self._state.address_book_manager.delete_contact(index)
-        return self._contacts_list("")
+        return self._contacts_list("", None)
 
     def _handle_notes(self, args: list[str]) -> str:
         normalized = [a.lower() for a in args] if args else []
         match normalized:
             case []:
-                return self._notes_list("")
+                return self._notes_list("", None)
             case ["add"]:
                 return self._notes_add()
             case ["show", index_str]:
@@ -155,10 +173,15 @@ class CommandDispatcher:
             case ["delete", index_str]:
                 return self._notes_delete(index_str)
             case [_, *_]:
-                return self._notes_list(args[0])
+                search, limit = self._parse_search_and_limit(args)
+                return self._notes_list(search, limit)
 
-    def _notes_list(self, search_term: str) -> str:
+    def _notes_list(self, search_term: str, limit: int | None) -> str:
         rows = self._state.notes_manager.get_notes_table_data(search_term)
+        if limit is not None and limit > 0 and len(rows) > limit:
+            total = len(rows)
+            rows = rows[:limit]
+            return self._renderer.format_notes_table(rows, total_count=total)
         return self._renderer.format_notes_table(rows)
 
     def _notes_show(self, index_str: str) -> str:
@@ -176,7 +199,7 @@ class CommandDispatcher:
         form = NoteConsoleForm()
         data = form.prompt()
         self._state.notes_manager.add_note(data)
-        return self._notes_list("")
+        return self._notes_list("", None)
 
     def _notes_edit(self, index_str: str) -> str:
         try:
@@ -197,7 +220,7 @@ class CommandDispatcher:
         form = NoteConsoleForm(existing=existing_data)
         data = form.prompt()
         self._state.notes_manager.edit_note(index, data)
-        return self._notes_list("")
+        return self._notes_list("", None)
 
     def _notes_delete(self, index_str: str) -> str:
         try:
@@ -210,7 +233,7 @@ class CommandDispatcher:
             return "⚠ Нотатку з таким індексом не знайдено."
 
         self._state.notes_manager.delete_note(index)
-        return self._notes_list("")
+        return self._notes_list("", None)
 
     def _handle_birthdays(self, args: list[str]) -> str:
         try:

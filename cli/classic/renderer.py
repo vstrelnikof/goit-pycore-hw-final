@@ -7,22 +7,22 @@ Align = Literal["<", ">"]
 
 # Спільний список рядків меню команд для дешборду та help.
 _COMMAND_MENU_LINES = [
-    "  🏠 dashboard / stats       — головний дешборд",
+    "  🏠 dashboard / stats        — головний дешборд",
     "",
-    "  👥 contacts [пошук]        — список контактів",
-    "     contacts add            — додати контакт",
-    "     contacts edit <index>   — редагувати контакт по індексу",
-    "     contacts delete <index> — видалити контакт по індексу",
+    "  👥 contacts [пошук] [N]     — список контактів (N — макс. рядків)",
+    "     contacts add             — додати контакт",
+    "     contacts edit <індекс>   — редагувати контакт по індексу",
+    "     contacts delete <індекс> — видалити контакт по індексу",
     "",
-    "  📝 notes [пошук]           — список нотаток",
-    "     notes add               — додати нотатку",
-    "     notes show <index>      — переглянути повний текст нотатки",
-    "     notes edit <index>      — редагувати нотатку по індексу",
-    "     notes delete <index>    — видалити нотатку по індексу",
+    "  📝 notes [пошук] [N]        — список нотаток (N — макс. рядків)",
+    "     notes add                — додати нотатку",
+    "     notes show <індекс>      — переглянути повний текст нотатки",
+    "     notes edit <індекс>      — редагувати нотатку по індексу",
+    "     notes delete <індекс>    — видалити нотатку по індексу",
     "",
-    "  🎂 birthdays [днів]        — іменинники на N днів",
-    "  ❓ help                    — детальна довідка",
-    "  👋 exit / quit             — вихід",
+    "  🎂 birthdays [днів]         — іменинники на N днів",
+    "  ❓ help                     — детальна довідка",
+    "  👋 exit / quit              — вихід",
 ]
 
 
@@ -80,19 +80,24 @@ class Renderer:
             lines.append(self._SEP.join(cells))
         return lines
 
-    def format_contacts_table(self, rows: TableData) -> str:
-        """Таблиця контактів з індексом для edit/delete."""
+    def format_contacts_table(
+        self, rows: TableData, total_count: int | None = None
+    ) -> str:
+        """Таблиця контактів з індексом для edit/delete. Якщо total_count > len(rows), додає підсумок «Показано N з M»."""
         if not rows:
             return Colors.dim("📭 Контактів не знайдено.")
         col_widths = [4, 25, 18, 22, 20, 12]
         titles = ["", "👤 Ім'я", "📞 Телефон", "✉ Email", "📍 Адреса", "🎂 Дата"]
         aligns: list[Align] = [">", "<", "<", "<", "<", "<"]
-        return "\n".join(
-            self._format_table(rows, col_widths, titles, aligns, show_index=True)
-        )
+        lines = self._format_table(rows, col_widths, titles, aligns, show_index=True)
+        if total_count is not None and total_count > len(rows):
+            lines.append(Colors.dim(f"Показано {len(rows)} з {total_count}."))
+        return "\n".join(lines)
 
-    def format_notes_table(self, rows: TableData) -> str:
-        """Таблиця нотаток з індексом."""
+    def format_notes_table(
+        self, rows: TableData, total_count: int | None = None
+    ) -> str:
+        """Таблиця нотаток з індексом. Якщо total_count > len(rows), додає підсумок «Показано N з M»."""
         if not rows:
             return Colors.dim("📝 Нотаток не знайдено.")
         width_text = 55
@@ -112,11 +117,12 @@ class Renderer:
             )
             for row in rows
         ]
-        return "\n".join(
-            self._format_table(
-                truncated_rows, col_widths, titles, aligns, show_index=True
-            )
+        lines = self._format_table(
+            truncated_rows, col_widths, titles, aligns, show_index=True
         )
+        if total_count is not None and total_count > len(rows):
+            lines.append(Colors.dim(f"Показано {len(rows)} з {total_count}."))
+        return "\n".join(lines)
 
     def format_note_full(self, note: Note) -> str:
         """Повний текст нотатки для перегляду (notes show <index>)."""
