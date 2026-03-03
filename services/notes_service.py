@@ -47,7 +47,7 @@ class NotesService(BaseService):
             table_data.append(
                 TableRow(
                     cells=[
-                        (note_text[:60] + "...") if len(note_text) > 60 else note_text,
+                        (note_text[:75] + "...") if len(note_text) > 75 else note_text,
                         note.tags_string,
                     ],
                     index=i,

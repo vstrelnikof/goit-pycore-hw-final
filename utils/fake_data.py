@@ -1,4 +1,5 @@
 import logging
+import random
 from typing import TYPE_CHECKING
 
 from faker import Faker
@@ -10,36 +11,21 @@ logger = logging.getLogger(__name__)
 
 _FAKER = Faker("uk_UA")
 
-# Теми для нотаток і тегів — реалістичний контент для скріншотів
-_NOTE_TEMPLATES = [
-    "Замовити квитки на концерт на наступний тиждень.",
-    "Передзвонити стоматологу щодо запису.",
-    "Купити подарунок на день народження Маші.",
-    "Перевірити баланс комунальних платежів.",
-    "Підготувати презентацію до п'ятниці.",
-    "Забрати посилку з відділення Нової пошти.",
-    "Записатися на курси англійської.",
-    "Роздрукувати документи до податкової.",
-    "Зустріч з командою о 15:00 — підсумки спринту.",
-    "Рецепт борщу від бабусі — зберегти.",
-    "Пароль від Wi-Fi офісу: записати в безпечне місце.",
-    "Ідеї для відпустки: Карпати або Одеса.",
-    "Список продуктів на тиждень — скласти в суботу.",
-    "Нагадування: оплатити страховку авто до кінця місяця.",
-    "Книги до прочитання: «Кобзар», «Тіні забутих предків».",
-]
-_NOTE_TAGS = [
-    "робота",
-    "особисте",
-    "покупки",
-    "здоров'я",
-    "події",
-    "ідеї",
-    "паролі",
-    "подорожі",
-    "нагадування",
-    "читання",
-]
+
+def _random_note_text() -> str:
+    """Повертає багаторядковий випадковий текст без шаблонів."""
+    num_paragraphs = random.randint(1, 5)
+    paragraphs = _FAKER.paragraphs(nb=num_paragraphs)
+    return "\n\n".join(paragraphs)
+
+
+def _random_tags(max_tags: int = 20) -> list[str]:
+    """Повертає список унікальних випадкових слів (тегів), від 1 до max_tags."""
+    count = random.randint(1, max_tags)
+    seen: set[str] = set()
+    while len(seen) < count:
+        seen.add(_FAKER.word())
+    return list(seen)
 
 
 def _generate_contact_data() -> dict:
@@ -56,10 +42,8 @@ def _generate_contact_data() -> dict:
 
 def _generate_note_data() -> dict:
     """Повертає словник для Note.from_dict (text + tags)."""
-    text = _FAKER.random_element(_NOTE_TEMPLATES)
-    tags = _FAKER.random_elements(
-        elements=_NOTE_TAGS, length=_FAKER.random_int(1, 4), unique=True
-    )
+    text = _random_note_text()
+    tags = _random_tags(max_tags=20)
     return {"text": text, "tags": tags}
 
 

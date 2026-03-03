@@ -33,7 +33,7 @@ class BirthdayGridView(BaseGridView):
         self._list_box = MultiColumnListBox(
             name="birthday_list",
             height=self.screen.height - 5,
-            columns=["<15%", "<25%", "<20%", "<20%", "<20%"],
+            columns=["<10%", "<25%", "<15%", "<25%", "<25%"],
             titles=["🎂 Дата", "👤 Ім'я", "📱 Телефон", "📧 Email", "🏠 Адреса"],
             options=[],  # Спочатку порожній, заповниться в _filter_list
         )

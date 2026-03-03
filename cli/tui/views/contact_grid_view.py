@@ -22,7 +22,7 @@ class ContactGridView(BaseGridView):
         self._list_box = MultiColumnListBox(
             name="contact_list",
             height=self.screen.height - 5,
-            columns=["<25%", "<20%", "<20%", "<20%", "<15%"],
+            columns=["<25%", "<15%", "<25%", "<25%", "<10%"],
             titles=["👤 Ім'я", "📱 Телефон", "📧 Email", "🏠 Адреса", "🎂 Дата"],
             options=[],
             on_select=self._on_edit,
