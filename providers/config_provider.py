@@ -63,14 +63,14 @@ class ConfigProvider:
             type=int,
             default=0,
             metavar="N",
-            help="Generate N fake contacts (Ukrainian locale) before starting",
+            help="Generate N fake contacts before starting",
         )
         parser.add_argument(
             "--create-fakes-notes",
             type=int,
             default=0,
             metavar="N",
-            help="Generate N fake notes (Ukrainian locale) before starting",
+            help="Generate N fake notes before starting",
         )
         args = parser.parse_args()
         return args
