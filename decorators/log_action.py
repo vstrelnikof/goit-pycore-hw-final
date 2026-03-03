@@ -7,6 +7,11 @@ from typing import Callable
 logger = logging.getLogger(__name__)
 
 
+# Ключі в extra не повинні збігатися з атрибутами LogRecord (funcName, name тощо)
+WRAPPED_FUNCNAME_KEY = "wrapped_funcName"
+WRAPPED_MODULE_KEY = "wrapped_module"
+
+
 def log_action(
     level: int = logging.INFO, log_time: bool = False, prefix: str = "Action"
 ):
@@ -15,7 +20,10 @@ def log_action(
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            log_extra = {"funcName": func.__name__, "name": func.__module__}
+            log_extra = {
+                WRAPPED_FUNCNAME_KEY: func.__name__,
+                WRAPPED_MODULE_KEY: func.__module__,
+            }
             logger.log(level, f"{prefix}: {func.__name__} started", extra=log_extra)
             start: float | None = time.perf_counter() if log_time else None
             # Перевірка на асинхронність
@@ -37,7 +45,12 @@ def log_action(
                 duration = time.perf_counter() - start_time
                 msg += f" in {duration:.4f}s"
             logger.log(
-                level, msg, extra={"funcName": func.__name__, "name": func.__module__}
+                level,
+                msg,
+                extra={
+                    WRAPPED_FUNCNAME_KEY: func.__name__,
+                    WRAPPED_MODULE_KEY: func.__module__,
+                },
             )
 
         return wrapper

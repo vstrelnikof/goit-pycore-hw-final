@@ -4,6 +4,8 @@ import logging
 from models.app_config import AppConfig
 from providers.config_provider import ConfigProvider
 from utils.state import AppState
+from utils.wrapped_func_formatter import WrappedFuncNameFormatter
+
 
 # Тільки для Windows терміналу
 if platform.system() == "Windows":
@@ -17,8 +19,14 @@ logging.basicConfig(
     filename="assistant.log",
     level=logging.INFO,
     filemode="a",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+)
+# Кастомний formatter щоб у логах з декоратора було ім'я обгорнутої функції
+_handler = logging.root.handlers[0]
+_handler.setFormatter(
+    WrappedFuncNameFormatter(
+        "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 )
 app_config: AppConfig = ConfigProvider.load()
 logging.root.setLevel(app_config.log_level)
