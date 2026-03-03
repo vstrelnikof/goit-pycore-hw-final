@@ -39,12 +39,9 @@ class AddressBookService(BaseService):
         table_data: TableData = []
         for i, contact in enumerate(self.contacts):
             is_relevant: bool = any(
-                [
-                    contact
-                    for contact_field_name, contact_field_value in contact.to_dict().items()
-                    if contact_field_name != "id"
-                    and search_term in contact_field_value.lower()
-                ]
+                contact_field_name != "id"
+                and search_term in contact_field_value.lower()
+                for contact_field_name, contact_field_value in contact.to_dict().items()
             )
             if not is_relevant:
                 continue
@@ -62,7 +59,7 @@ class AddressBookService(BaseService):
                     index=i,
                 )
             )
-        table_data.sort(key=lambda row: row.cells[0])
+        table_data.sort(key=lambda row: self._ukrainian_sort_key(row.cells[0]))
         return table_data
 
     def get_birthdays_table_data(self, days: int) -> TableData:

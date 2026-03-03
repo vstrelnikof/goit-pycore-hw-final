@@ -53,7 +53,9 @@ class NotesService(BaseService):
                     index=i,
                 )
             )
-        table_data.sort(key=lambda row: row.index, reverse=sort_desc)
+        table_data.sort(
+            key=lambda row: self._ukrainian_sort_key(row.cells[1]), reverse=sort_desc
+        )
         return table_data
 
     def save(self) -> None:
