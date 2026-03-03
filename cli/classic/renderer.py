@@ -1,6 +1,6 @@
 from typing import Literal
 from models.table_row import TableData, TableRow
-from cli.classic.colors import dim, separator, title
+from cli.classic.colors import Colors
 
 Align = Literal["<", ">"]
 
@@ -38,9 +38,9 @@ class Renderer:
             header_cells = [
                 self._cell(t, col_widths[i], aligns[i]) for i, t in enumerate(titles)
             ]
-        lines.append(title(self._SEP.join(header_cells)))
+        lines.append(Colors.title(self._SEP.join(header_cells)))
         total_width = sum(col_widths) + len(self._SEP) * (len(col_widths) - 1)
-        lines.append(separator("-" * total_width))
+        lines.append(Colors.separator("-" * total_width))
         # Рядки
         for row in rows:
             row_cells, index = row.cells, row.index
@@ -61,7 +61,7 @@ class Renderer:
     def format_contacts_table(self, rows: TableData) -> str:
         """Таблиця контактів з індексом для edit/delete."""
         if not rows:
-            return dim("Контактів не знайдено.")
+            return Colors.dim("Контактів не знайдено.")
         col_widths = [4, 25, 18, 22, 20, 12]
         titles = ["", "Ім'я", "Телефон", "Email", "Адреса", "Дата"]
         aligns: list[Align] = [">", "<", "<", "<", "<", "<"]
@@ -72,7 +72,7 @@ class Renderer:
     def format_notes_table(self, rows: TableData) -> str:
         """Таблиця нотаток з індексом."""
         if not rows:
-            return dim("Нотаток не знайдено.")
+            return Colors.dim("Нотаток не знайдено.")
         width_text = 55
         width_tags = 30
         col_widths = [4, width_text, width_tags]
@@ -95,7 +95,7 @@ class Renderer:
     def format_birthdays_table(self, rows: TableData) -> str:
         """Таблиця днів народження."""
         if not rows:
-            return dim("На вказаний період іменинників немає.")
+            return Colors.dim("На вказаний період іменинників немає.")
         col_widths = [12, 20, 18, 22, 20]
         titles = ["Дата", "Ім'я", "Телефон", "Email", "Адреса"]
         aligns: list[Align] = [">", "<", "<", "<", "<"]
