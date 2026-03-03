@@ -25,6 +25,7 @@ _COMMAND_MENU_LINES = [
     "  👋 exit / quit             — вихід",
 ]
 
+
 class Renderer:
     """Форматування виводу команд: таблиці з колонками заданої ширини та вирівнювання."""
 
@@ -102,7 +103,9 @@ class Renderer:
         truncated_rows: TableData = [
             TableRow(
                 cells=[
-                    row.cells[0][: width_text - 2] + ".." if len(row.cells[0]) > width_text else row.cells[0],
+                    row.cells[0][: width_text - 2] + ".."
+                    if len(row.cells[0]) > width_text
+                    else row.cells[0],
                     row.cells[1],
                 ],
                 index=row.index,
@@ -110,12 +113,18 @@ class Renderer:
             for row in rows
         ]
         return "\n".join(
-            self._format_table(truncated_rows, col_widths, titles, aligns, show_index=True)
+            self._format_table(
+                truncated_rows, col_widths, titles, aligns, show_index=True
+            )
         )
 
     def format_note_full(self, note: Note) -> str:
         """Повний текст нотатки для перегляду (notes show <index>)."""
-        lines = [Colors.title("📝 Нотатка"), Colors.separator("-" * 50), note.text.strip()]
+        lines = [
+            Colors.title("📝 Нотатка"),
+            Colors.separator("-" * 50),
+            note.text.strip(),
+        ]
         if note.tags:
             lines.append("")
             lines.append(Colors.dim(f"🏷 Теги: {note.tags_string}"))

@@ -14,9 +14,7 @@ class ContactConsoleForm:
         # Ім'я
         existing_name = self._existing.get("name", "")
         name_prompt = (
-            "👤 Ім'я*: "
-            if not existing_name
-            else f"👤 Ім'я* [{existing_name}]: "
+            "👤 Ім'я*: " if not existing_name else f"👤 Ім'я* [{existing_name}]: "
         )
         name = input(Colors.accent(name_prompt)).strip() or existing_name
         while not name:
@@ -40,9 +38,7 @@ class ContactConsoleForm:
         # Email
         existing_email = self._existing.get("email", "")
         email_prompt = (
-            "✉ Email: "
-            if not existing_email
-            else f"✉ Email [{existing_email}]: "
+            "✉ Email: " if not existing_email else f"✉ Email [{existing_email}]: "
         )
         email = input(Colors.accent(email_prompt)).strip() or existing_email
         while email and not Validator.validate_email(email):
@@ -57,7 +53,9 @@ class ContactConsoleForm:
             if not existing_address
             else f"📍 Адреса [{existing_address}]: "
         )
-        data["address"] = input(Colors.accent(address_prompt)).strip() or existing_address
+        data["address"] = (
+            input(Colors.accent(address_prompt)).strip() or existing_address
+        )
 
         # День народження
         existing_birthday_raw = self._existing.get("birthday", "")
@@ -73,7 +71,9 @@ class ContactConsoleForm:
         birthday = input(Colors.accent(birthday_prompt)).strip() or existing_birthday
         while birthday and not Validator.validate_date(birthday):
             print(Colors.error("  ⚠ Невірний формат дати. Приклад: 1990-05-15"))
-            birthday = input(Colors.accent(birthday_prompt)).strip() or existing_birthday
+            birthday = (
+                input(Colors.accent(birthday_prompt)).strip() or existing_birthday
+            )
         data["birthday"] = birthday
 
         return data

@@ -9,6 +9,7 @@ EXIT_SENTINEL = object()
 
 ActionHandler = Callable[[list[str]], str | object]
 
+
 @final
 class CommandDispatcher:
     """Парсинг та виконання команд класичного режиму"""
@@ -42,7 +43,9 @@ class CommandDispatcher:
         if not unknown_cmd.strip():
             return "💡 Введіть help — список команд."
         known = list(self._handlers.keys())
-        matches = difflib.get_close_matches(unknown_cmd.strip().lower(), known, n=1, cutoff=0.4)
+        matches = difflib.get_close_matches(
+            unknown_cmd.strip().lower(), known, n=1, cutoff=0.4
+        )
         if matches:
             return f"❓ Невідома команда «{unknown_cmd.strip()}». Можливо, ви мали на увазі: {matches[0]}"
         return "❓ Невідома команда. Введіть help — список доступних команд."
@@ -56,7 +59,9 @@ class CommandDispatcher:
         # Невідома команда: якщо є одна близька — виконуємо її
         if cmd.strip():
             known = list(self._handlers.keys())
-            matches = difflib.get_close_matches(cmd.strip().lower(), known, n=1, cutoff=0.4)
+            matches = difflib.get_close_matches(
+                cmd.strip().lower(), known, n=1, cutoff=0.4
+            )
             if len(matches) == 1:
                 return self._handlers[matches[0]](args)
 
@@ -84,7 +89,7 @@ class CommandDispatcher:
                 return self._contacts_edit(index_str)
             case ["delete", index_str]:
                 return self._contacts_delete(index_str)
-            case [search_term, *_]:
+            case [_, *_]:
                 return self._contacts_list(args[0])
 
     def _contacts_list(self, search_term: str) -> str:
@@ -149,7 +154,7 @@ class CommandDispatcher:
                 return self._notes_edit(index_str)
             case ["delete", index_str]:
                 return self._notes_delete(index_str)
-            case [search_term, *_]:
+            case [_, *_]:
                 return self._notes_list(args[0])
 
     def _notes_list(self, search_term: str) -> str:

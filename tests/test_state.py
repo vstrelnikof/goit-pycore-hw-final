@@ -6,6 +6,7 @@ from services.address_book_service import AddressBookService
 from services.notes_service import NotesService
 from utils.state import AppState
 
+
 @pytest.fixture
 def app_state(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AppState:
     # Працюємо в тимчасовій директорії, щоб не торкатись реальних файлів
@@ -17,6 +18,7 @@ def app_state(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AppState:
     config = AppConfig(app_data_paths=paths)
     return AppState(config)
 
+
 def test_app_state_initializes_services_and_theme(app_state: AppState) -> None:
     assert isinstance(app_state.address_book_manager, AddressBookService)
     assert isinstance(app_state.notes_manager, NotesService)
@@ -24,6 +26,7 @@ def test_app_state_initializes_services_and_theme(app_state: AppState) -> None:
     assert app_state.tui_theme == AppConfig().theme
     # За замовчуванням жоден елемент не редагується
     assert app_state.edit_index is None
+
 
 def test_get_stats_reflects_current_counts(app_state: AppState) -> None:
     # Початково обидва списки порожні
@@ -36,4 +39,3 @@ def test_get_stats_reflects_current_counts(app_state: AppState) -> None:
     stats = app_state.get_stats()
     assert stats["contacts"] == 2
     assert stats["notes"] == 1
-

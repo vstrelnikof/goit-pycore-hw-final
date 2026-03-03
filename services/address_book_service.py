@@ -6,11 +6,12 @@ from models.contact_birthday import ContactBirthday
 from models.table_row import TableData, TableRow
 from services.base_service import BaseService
 
+
 @final
 class AddressBookService(BaseService):
     """Сервіс для роботи з адресною книгою"""
 
-    def find_contact_by_id(self, id: str) -> (Contact | None):
+    def find_contact_by_id(self, id: str) -> Contact | None:
         return next((contact for contact in self.contacts if contact.id == id), None)
 
     @log_command_action()
@@ -20,7 +21,7 @@ class AddressBookService(BaseService):
             return
         self.contacts.append(new_contact)
         self.save()
-    
+
     @log_command_action()
     def edit_contact(self, index: int, data: dict) -> None:
         updated_contact: Contact = Contact.from_dict(data)
@@ -37,18 +38,30 @@ class AddressBookService(BaseService):
     def get_contacts_table_data(self, search_term: str) -> TableData:
         table_data: TableData = []
         for i, contact in enumerate(self.contacts):
-            is_relevant: bool = any([contact for contact_field_name, contact_field_value
-                                     in contact.to_dict().items()
-                                     if contact_field_name != "id" and 
-                                     search_term in contact_field_value.lower()])
+            is_relevant: bool = any(
+                [
+                    contact
+                    for contact_field_name, contact_field_value in contact.to_dict().items()
+                    if contact_field_name != "id"
+                    and search_term in contact_field_value.lower()
+                ]
+            )
             if not is_relevant:
                 continue
             birthday_date: date | None = contact.birthday_date
             birthday: str = birthday_date.isoformat() if birthday_date else ""
-            table_data.append(TableRow(
-                cells=[contact.name, contact.phone, contact.email, contact.address, birthday],
-                index=i,
-            ))
+            table_data.append(
+                TableRow(
+                    cells=[
+                        contact.name,
+                        contact.phone,
+                        contact.email,
+                        contact.address,
+                        birthday,
+                    ],
+                    index=i,
+                )
+            )
         return table_data
 
     def get_birthdays_table_data(self, days: int) -> TableData:
@@ -56,7 +69,9 @@ class AddressBookService(BaseService):
         today: date = datetime.now().date()
         for i, contact in enumerate(self.contacts):
             birthday_date: date | None = contact.get_next_birthday_date(today)
-            if not birthday_date or not self.is_birthday_soon(birthday_date, days, today):
+            if not birthday_date or not self.is_birthday_soon(
+                birthday_date, days, today
+            ):
                 continue
             table_data.append(
                 TableRow(
@@ -80,14 +95,21 @@ class AddressBookService(BaseService):
             if next_birthday_date and self.is_birthday_soon(next_birthday_date, 7):
                 upcoming_contacts.append(ContactBirthday(next_birthday_date, contact))
         upcoming_contacts.sort(key=lambda row: row.birthday_date)
-        return [f"  • {row.birthday_date.strftime('%d.%m')}: {row.contact.name}" \
-                for row in upcoming_contacts] \
-                if upcoming_contacts else ["На найближчий тиждень іменинників немає"]
+        return (
+            [
+                f"  • {row.birthday_date.strftime('%d.%m')}: {row.contact.name}"
+                for row in upcoming_contacts
+            ]
+            if upcoming_contacts
+            else ["На найближчий тиждень іменинників немає"]
+        )
 
-    def is_birthday_soon(self, 
-                         next_birthday_date: date,
-                         days: int,
-                         today: datetime | date = datetime.now().date()) -> bool:
+    def is_birthday_soon(
+        self,
+        next_birthday_date: date,
+        days: int,
+        today: datetime | date = datetime.now().date(),
+    ) -> bool:
         days_until: int = (next_birthday_date - today).days
         return 0 <= days_until <= days
 

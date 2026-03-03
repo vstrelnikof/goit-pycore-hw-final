@@ -1,10 +1,10 @@
 from pathlib import Path
 import pytest
 from models.contact import Contact
-from models.note import Note
 from providers.storage_provider import StorageProvider
 from services.address_book_service import AddressBookService
 from services.notes_service import NotesService
+
 
 @pytest.fixture
 def address_book_service(tmp_path: Path) -> AddressBookService:
@@ -14,12 +14,14 @@ def address_book_service(tmp_path: Path) -> AddressBookService:
     service.contacts.clear()
     return service
 
+
 @pytest.fixture
 def notes_service(tmp_path: Path) -> NotesService:
     storage = StorageProvider(tmp_path / "notes.json")
     service = NotesService(storage)
     service.notes.clear()
     return service
+
 
 def test_add_contact_valid_creates_and_persists_record(
     address_book_service: AddressBookService,
@@ -39,6 +41,7 @@ def test_add_contact_valid_creates_and_persists_record(
     assert len(stored) == 1
     assert stored[0]["name"] == "John Doe"
 
+
 def test_add_contact_invalid_does_not_save(
     address_book_service: AddressBookService,
 ) -> None:
@@ -55,6 +58,7 @@ def test_add_contact_invalid_does_not_save(
 
     assert len(address_book_service.contacts) == 0
     assert list(address_book_service.storage.load_list()) == []
+
 
 def test_edit_and_delete_contact_update_storage(
     address_book_service: AddressBookService,
@@ -91,6 +95,7 @@ def test_edit_and_delete_contact_update_storage(
     assert len(address_book_service.contacts) == 0
     assert list(address_book_service.storage.load_list()) == []
 
+
 def test_get_contacts_table_data_filters_by_search_term(
     address_book_service: AddressBookService,
 ) -> None:
@@ -116,6 +121,7 @@ def test_get_contacts_table_data_filters_by_search_term(
     assert len(rows) == 1
     assert rows[0].cells[0] == "Alice"
 
+
 def test_add_note_valid_creates_and_persists_record(
     notes_service: NotesService,
 ) -> None:
@@ -128,12 +134,14 @@ def test_add_note_valid_creates_and_persists_record(
     # Теги зберігаються як список
     assert stored[0]["tags"] == ["one", "two"]
 
+
 def test_add_note_invalid_does_not_save(notes_service: NotesService) -> None:
     # Порожній текст робить нотатку невалідною
     notes_service.add_note({"text": "   ", "tags": ""})
 
     assert len(notes_service.notes) == 0
     assert list(notes_service.storage.load_list()) == []
+
 
 def test_get_notes_table_data_filters_and_sorts(
     notes_service: NotesService,
@@ -150,4 +158,3 @@ def test_get_notes_table_data_filters_and_sorts(
     all_rows_desc = notes_service.get_notes_table_data("", sort_desc=True)
     assert len(all_rows_desc) == 2
     assert all_rows_desc[0].index > all_rows_desc[1].index
-

@@ -6,9 +6,11 @@ from uuid import UUID, uuid4
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass(kw_only=True)
 class BaseModel(ABC):
     """Архі-тип для реалізації моделі даних"""
+
     id: UUID = field(default_factory=uuid4)
 
     @final
@@ -23,7 +25,7 @@ class BaseModel(ABC):
     def to_dict(self) -> dict:
         """Перетворює модель у словник, придатний для JSON серіалізатора"""
         data: dict = asdict(self)
-        data['id'] = str(self.id)
+        data["id"] = str(self.id)
         return data
 
     @abstractmethod

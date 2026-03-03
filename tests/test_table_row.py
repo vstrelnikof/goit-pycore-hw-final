@@ -1,8 +1,10 @@
 from models.table_row import TableData, TableRow
 
+
 def test_table_row_to_tuple_returns_cells_and_index() -> None:
     row = TableRow(cells=["a", "b"], index=0)
     assert row.to_tuple() == (["a", "b"], 0)
+
 
 def test_table_data_is_list_of_table_row() -> None:
     data: TableData = [

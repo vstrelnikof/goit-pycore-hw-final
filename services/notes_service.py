@@ -4,11 +4,12 @@ from models.note import Note
 from models.table_row import TableData, TableRow
 from services.base_service import BaseService
 
+
 @final
 class NotesService(BaseService):
     """Сервіс для роботи з нотатками"""
 
-    def find_note_by_id(self, id: str) -> (Note | None):
+    def find_note_by_id(self, id: str) -> Note | None:
         return next((note for note in self.notes if note.id == id), None)
 
     @log_command_action()
@@ -32,21 +33,26 @@ class NotesService(BaseService):
         self.notes.pop(index)
         self.save()
 
-    def get_notes_table_data(self, search_term: str, sort_desc: bool = False) -> TableData:
+    def get_notes_table_data(
+        self, search_term: str, sort_desc: bool = False
+    ) -> TableData:
         table_data: TableData = []
         for i, note in enumerate(self.notes):
-            is_relevant: bool = search_term in note.text.lower() or \
-                any([tag for tag in note.tags if search_term in tag.lower()])
+            is_relevant: bool = search_term in note.text.lower() or any(
+                [tag for tag in note.tags if search_term in tag.lower()]
+            )
             if not is_relevant:
                 continue
-            note_text: str = note.text.replace('\n', ' ')
-            table_data.append(TableRow(
-                cells=[
-                    (note_text[:60] + '...') if len(note_text) > 60 else note_text,
-                    note.tags_string,
-                ],
-                index=i,
-            ))
+            note_text: str = note.text.replace("\n", " ")
+            table_data.append(
+                TableRow(
+                    cells=[
+                        (note_text[:60] + "...") if len(note_text) > 60 else note_text,
+                        note.tags_string,
+                    ],
+                    index=i,
+                )
+            )
         table_data.sort(key=lambda row: row.index, reverse=sort_desc)
         return table_data
 

@@ -6,16 +6,20 @@ from cli.tui.base_frame import BaseFrame
 from enums.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 
+
 class BaseForm(BaseFrame):
     """Архі-клас для реалізації модальних вікон із формою та елементами управління"""
 
     def __init__(self, screen: Screen, state: AppState, **kwargs) -> None:
-        super().__init__(screen, state,
-                         height=screen.height // 2,
-                         width=screen.width // 2,
-                         has_shadow=True,
-                         is_modal=True,
-                         **kwargs)
+        super().__init__(
+            screen,
+            state,
+            height=screen.height // 2,
+            width=screen.width // 2,
+            has_shadow=True,
+            is_modal=True,
+            **kwargs,
+        )
         self._render_content()
         layout = Layout([1])
         self.add_layout(layout)
@@ -55,10 +59,10 @@ class BaseForm(BaseFrame):
         has_errors = bool(errors)
         if has_errors:
             self.scene.add_effect(
-                PopUpDialog(self._screen, '\n'.join(errors), ["Виправити"])
+                PopUpDialog(self._screen, "\n".join(errors), ["Виправити"])
             )
         return not has_errors
-    
+
     def _clear_edit_index(self):
         self._state.edit_index = None
 

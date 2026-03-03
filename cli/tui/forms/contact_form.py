@@ -10,6 +10,7 @@ from models.contact import Contact
 
 logger = logging.getLogger(__name__)
 
+
 class ContactForm(BaseForm):
     """Клас форми створення/редагування контакту"""
 
@@ -23,7 +24,7 @@ class ContactForm(BaseForm):
 
     def __init__(self, screen: Screen, state: AppState):
         super().__init__(screen, state, can_scroll=False)
-    
+
     def _render_content(self) -> None:
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
@@ -31,33 +32,60 @@ class ContactForm(BaseForm):
         layout.add_widget(Label("Формат дати:     YYYY-MM-DD"))
         layout.add_widget(Divider())
         layout.add_widget(Text("Ім'я*:", "name"))
-        layout.add_widget(Text("Телефон:", "phone", validator=lambda phone_string:
-                               not phone_string or Validator.validate_phone(phone_string)))
-        layout.add_widget(Text("Email:", "email", validator=lambda email_string:
-                               not email_string or Validator.validate_email(email_string)))
+        layout.add_widget(
+            Text(
+                "Телефон:",
+                "phone",
+                validator=lambda phone_string: (
+                    not phone_string or Validator.validate_phone(phone_string)
+                ),
+            )
+        )
+        layout.add_widget(
+            Text(
+                "Email:",
+                "email",
+                validator=lambda email_string: (
+                    not email_string or Validator.validate_email(email_string)
+                ),
+            )
+        )
         layout.add_widget(Text("Адреса:", "address"))
-        layout.add_widget(Text("День народження:", "birthday", validator=lambda date_string:
-                               not date_string or Validator.validate_date(date_string)))
+        layout.add_widget(
+            Text(
+                "День народження:",
+                "birthday",
+                validator=lambda date_string: (
+                    not date_string or Validator.validate_date(date_string)
+                ),
+            )
+        )
         layout.add_widget(Divider())
-    
+
     def reset(self) -> None:
         super().reset()
         if self._state.edit_index is not None:
             self.title = "👤 Редагування контакту"
-            contact: Contact = self._state.address_book_manager.contacts[self._state.edit_index]
+            contact: Contact = self._state.address_book_manager.contacts[
+                self._state.edit_index
+            ]
             self.data = {
                 "name": contact.name,
                 "phone": contact.phone,
                 "email": contact.email,
                 "address": contact.address,
-                "birthday": contact.birthday
+                "birthday": contact.birthday,
             }
             return
         self.title = "👤 Новий контакт"
         self.data = {
-            "name": "", "phone": "", "email": "", "address": "", "birthday": ""
+            "name": "",
+            "phone": "",
+            "email": "",
+            "address": "",
+            "birthday": "",
         }
-    
+
     def _handle_saved(self):
         super().reset()
         SceneFactory.next(SceneType.CONTACTS_GRID)
@@ -71,23 +99,29 @@ class ContactForm(BaseForm):
             if self._state.edit_index is None:
                 self._state.address_book_manager.add_contact(self.data)
             else:
-                self._state.address_book_manager.edit_contact(self._state.edit_index, self.data)
-            self.scene.add_effect(PopUpDialog(self._screen,
-                                              f"✅ Контакт \"{self.data["name"]}\" успішно збережено!",
-                                              ["Чудово"], 
-                                              on_close=lambda _: self._handle_saved())
+                self._state.address_book_manager.edit_contact(
+                    self._state.edit_index, self.data
+                )
+            self.scene.add_effect(
+                PopUpDialog(
+                    self._screen,
+                    f'✅ Контакт "{self.data["name"]}" успішно збережено!',
+                    ["Чудово"],
+                    on_close=lambda _: self._handle_saved(),
+                )
             )
             self._clear_edit_index()
         except Exception as e:
             logger.error("Cannot save Contact")
             logger.exception(e)
             self.scene.add_effect(
-                PopUpDialog(self._screen,
-                            "❌ Помилка збереження Контакту",
-                            ["Спробувати ще раз"])
+                PopUpDialog(
+                    self._screen,
+                    "❌ Помилка збереження Контакту",
+                    ["Спробувати ще раз"],
+                )
             )
-    
+
     def _cancel(self) -> None:
         self._clear_edit_index()
         SceneFactory.next(SceneType.CONTACTS_GRID)
-

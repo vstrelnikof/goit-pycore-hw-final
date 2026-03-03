@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import final
 from models.base_model import BaseModel
 
+
 @final
 @dataclass(kw_only=True)
 class Note(BaseModel):
@@ -10,7 +11,7 @@ class Note(BaseModel):
 
     @property
     def tags_string(self) -> str:
-        return ', '.join(self.tags)
+        return ", ".join(self.tags)
 
     def _validate(self) -> dict[str, bool]:
         return {
@@ -26,5 +27,5 @@ class Note(BaseModel):
         data = super()._transform_form_data(data)
         tags = data.get("tags")
         if isinstance(tags, str):
-            data["tags"] = [tag.strip() for tag in tags.split(',')]
+            data["tags"] = [tag.strip() for tag in tags.split(",")]
         return data

@@ -1,5 +1,6 @@
 from cli.classic.colors import Colors
 
+
 class NoteConsoleForm:
     """Інтерактивна форма введення / редагування нотатки."""
 

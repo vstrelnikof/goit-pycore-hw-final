@@ -8,10 +8,10 @@ from utils.state import AppState
 # Тільки для Windows терміналу
 if platform.system() == "Windows":
     # Виставляємо кодування UTF-8 (65001)
-    os.system('chcp 65001 > nul 2>&1')
-    os.system('cls')
+    os.system("chcp 65001 > nul 2>&1")
+    os.system("cls")
 else:
-    os.system('clear')
+    os.system("clear")
 
 logging.basicConfig(
     filename="assistant.log",
@@ -29,8 +29,10 @@ app_state = AppState(app_config)
 
 if app_config.classic:
     import colorama
+
     colorama.init(autoreset=True)
     from cli.classic import run
+
     logger.info("Starting personal assistant (classic mode)...")
     run(app_state)
 else:
@@ -47,17 +49,17 @@ else:
 
     def demo(screen: Screen, state: AppState):
         """Ініціалізатор asciimatics"""
-        scenes: list[Scene] = SceneFactory.createScenes({
-            SceneType.MAIN: DashboardView(screen, state),
-            SceneType.CONTACT_FORM: ContactForm(screen, state),
-            SceneType.CONTACTS_GRID: ContactGridView(screen, state),
-            SceneType.BIRTHDAYS_GRID: BirthdayGridView(screen, state),
-            SceneType.NOTE_FORM: NoteForm(screen, state),
-            SceneType.NOTES_GRID: NoteGridView(screen, state),
-        })
-        screen.play(scenes,
-                    stop_on_resize=True,
-                    repeat=True)
+        scenes: list[Scene] = SceneFactory.createScenes(
+            {
+                SceneType.MAIN: DashboardView(screen, state),
+                SceneType.CONTACT_FORM: ContactForm(screen, state),
+                SceneType.CONTACTS_GRID: ContactGridView(screen, state),
+                SceneType.BIRTHDAYS_GRID: BirthdayGridView(screen, state),
+                SceneType.NOTE_FORM: NoteForm(screen, state),
+                SceneType.NOTES_GRID: NoteGridView(screen, state),
+            }
+        )
+        screen.play(scenes, stop_on_resize=True, repeat=True)
 
     logger.info("Starting personal assistant...")
     Screen.wrapper(demo, arguments=[app_state])

@@ -6,6 +6,7 @@ from decorators.log_action import log_action
 
 logger = logging.getLogger(__name__)
 
+
 class StorageProvider:
     """Провайдер сховища (поки тільки JSON)"""
 
@@ -37,6 +38,6 @@ class StorageProvider:
         try:
             with self.file.open("w", encoding=self.file_encoding) as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
-            logger.debug(f"File \"{self.file}\" saved successfully")
+            logger.debug(f'File "{self.file}" saved successfully')
         except Exception as e:
             logger.error(f"Error saving file: {e}")

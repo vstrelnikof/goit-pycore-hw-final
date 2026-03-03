@@ -1,22 +1,18 @@
 # Git hooks (аналог Husky): перевірки перед commit та push.
 # Документація: docs/development.md
 
-default_stages: [commit, push]
+default_stages: [pre-commit, pre-push]
 
 repos:
-  # Перевірки перед комітом: лінт і стиль (використовується ruff з venv)
-  - repo: local
+  # Ruff: pre-commit сам ставить ruff у своє середовище — стабільно працює на Windows
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.4
     hooks:
       - id: ruff-check
-        name: ruff check
-        entry: ruff check . --fix
-        language: system
-        stages: [commit]
+        stages: [pre-commit]
+        args: [--fix]
       - id: ruff-format
-        name: ruff format
-        entry: ruff format .
-        language: system
-        stages: [commit]
+        stages: [pre-commit]
 
   # Перед push обов'язково проходять тести — push без зелених тестів заблоковано
   - repo: local
@@ -25,6 +21,6 @@ repos:
         name: pytest
         entry: python -m pytest tests/ -v --tb=short
         language: system
-        stages: [push]
+        stages: [pre-push]
         pass_filenames: false
         always_run: true

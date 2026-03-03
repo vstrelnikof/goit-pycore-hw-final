@@ -6,8 +6,12 @@ from typing import Callable
 
 logger = logging.getLogger(__name__)
 
-def log_action(level: int = logging.INFO, log_time: bool = False, prefix: str = "Action"):
+
+def log_action(
+    level: int = logging.INFO, log_time: bool = False, prefix: str = "Action"
+):
     """Фабрика декораторів для логування"""
+
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -15,10 +19,12 @@ def log_action(level: int = logging.INFO, log_time: bool = False, prefix: str = 
             start: float | None = time.perf_counter() if log_time else None
             # Перевірка на асинхронність
             if inspect.iscoroutinefunction(func):
+
                 async def async_wrapper():
                     res = await func(*args, **kwargs)
                     _finish(start)
                     return res
+
                 return async_wrapper()
             result = func(*args, **kwargs)
             _finish(start)
@@ -32,4 +38,5 @@ def log_action(level: int = logging.INFO, log_time: bool = False, prefix: str = 
             logger.log(level, msg)
 
         return wrapper
+
     return decorator

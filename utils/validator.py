@@ -1,6 +1,7 @@
 import re
 from typing import final
 
+
 @final
 class Validator:
     """Утилітний клас, містить різноманітні методи валідації"""
