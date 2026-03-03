@@ -1,0 +1,3 @@
+# Dev dependencies (optional): lint & format
+-r requirements.txt
+ruff>=0.4.0
