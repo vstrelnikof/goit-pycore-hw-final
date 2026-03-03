@@ -6,7 +6,7 @@ Align = Literal["<", ">"]
 
 # Спільний список рядків меню команд для дешборду та help.
 _COMMAND_MENU_LINES = [
-    "  🏠 dashboard                   — головний дешборд",
+    "  🏠 dashboard / stats           — головний дешборд",
     "",
     "  👥 contacts [пошук]            — список контактів",
     "  👥 contacts add                — додати контакт",

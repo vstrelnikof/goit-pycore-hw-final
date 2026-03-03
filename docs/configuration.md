@@ -10,7 +10,7 @@
 app:
   log_level: 20          # 10=DEBUG, 20=INFO, 30=WARNING, 40=ERROR, 50=CRITICAL
   theme: "default"       # default / monochrome / green / bright (TUI)
-  classic: false        # true — запуск у класичному консольному режимі
+  classic: false         # true — запуск у класичному консольному режимі
   app_data_paths:
     address_book: data/contacts.json
     notes: data/notes.json

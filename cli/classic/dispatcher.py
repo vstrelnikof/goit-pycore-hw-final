@@ -18,6 +18,7 @@ class CommandDispatcher:
         self._renderer = Renderer()
         self._handlers: dict[str, ActionHandler] = {
             "dashboard": self._handle_dashboard,
+            "stats": self._handle_dashboard,
             "exit": self._handle_exit,
             "quit": self._handle_exit,
             "help": self._handle_help,
