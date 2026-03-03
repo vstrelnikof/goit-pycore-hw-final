@@ -4,6 +4,25 @@ from cli.classic.colors import Colors
 
 Align = Literal["<", ">"]
 
+# Спільний список рядків меню команд для дешборду та help.
+_COMMAND_MENU_LINES = [
+    "  🏠 dashboard                   — головний дешборд",
+    "",
+    "  👥 contacts [пошук]            — список контактів",
+    "  👥 contacts add                — додати контакт",
+    "  👥 contacts edit <index>       — редагувати контакт",
+    "  👥 contacts delete <index>     — видалити контакт",
+    "",
+    "  📝 notes [пошук]               — список нотаток",
+    "  📝 notes add                   — додати нотатку",
+    "  📝 notes edit <index>          — редагувати нотатку",
+    "  📝 notes delete <index>        — видалити нотатку",
+    "",
+    "  🎂 birthdays [днів]            — іменинники на N днів",
+    "  ❓ help                        — детальна довідка",
+    "  👋 exit / quit                 — вихід",
+]
+
 class Renderer:
     """Форматування виводу команд: таблиці з колонками заданої ширини та вирівнювання."""
 
@@ -14,7 +33,7 @@ class Renderer:
         """Одна комірка: обрізає по width і форматує через f\"{text:{align}{width}}\"."""
         s = str(value)
         if len(s) > width:
-            s = s[: max(0, width - 2)] + ".."
+            s = s[: max(0, width - 3)] + "..."
         return f"{s:{align}{width}}"
 
     def _format_table(
@@ -102,3 +121,25 @@ class Renderer:
         return "\n".join(
             self._format_table(rows, col_widths, titles, aligns, show_index=False)
         )
+
+    def format_dashboard(self, stats: dict[str, int], birthdays: list[str]) -> str:
+        """Текстовий дешборд: статистика, найближчі дні народження, меню команд."""
+        lines: list[str] = []
+        lines.append("📊 Personal Assistant (classic mode)")
+        lines.append("-" * 60)
+        lines.append(f"👥 Контактів: {stats['contacts']}")
+        lines.append(f"📝 Нотаток : {stats['notes']}")
+        lines.append("")
+        lines.append("🎂 Найближчі дні народження:")
+        for line in birthdays:
+            lines.append(f"  {line}")
+        lines.append("")
+        lines.append("📋 Основні команди:")
+        lines.extend(_COMMAND_MENU_LINES)
+        return "\n".join(lines)
+
+    def format_help(self) -> str:
+        """Повний текст довідки (список команд)."""
+        lines = ["📖 Доступні команди:", ""]
+        lines.extend(_COMMAND_MENU_LINES)
+        return "\n".join(lines)

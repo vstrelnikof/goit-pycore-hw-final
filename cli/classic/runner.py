@@ -6,6 +6,7 @@ from utils.state import AppState
 def run(app_state: AppState) -> None:
     """Головний цикл класичного режиму: читає рядки, виконує команди через CommandDispatcher, виводить результат."""
     dispatcher = CommandDispatcher(app_state)
+    print(dispatcher.run("dashboard", []))
     while True:
         try:
             line = input(Colors.accent("➜ "))

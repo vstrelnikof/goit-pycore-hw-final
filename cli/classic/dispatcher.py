@@ -1,6 +1,7 @@
 import difflib
 from typing import Callable, final
 from cli.classic.renderer import Renderer
+from cli.classic.forms import ContactConsoleForm, NoteConsoleForm
 from utils.state import AppState
 
 # Спеціальне значення, що повертається при команді виходу (exit/quit).
@@ -10,12 +11,13 @@ ActionHandler = Callable[[list[str]], str | object]
 
 @final
 class CommandDispatcher:
-    """Парсинг та виконання команд класичного режиму."""
+    """Парсинг та виконання команд класичного режиму"""
 
     def __init__(self, state: AppState) -> None:
         self._state = state
         self._renderer = Renderer()
         self._handlers: dict[str, ActionHandler] = {
+            "dashboard": self._handle_dashboard,
             "exit": self._handle_exit,
             "quit": self._handle_exit,
             "help": self._handle_help,
@@ -51,21 +53,137 @@ class CommandDispatcher:
             return self.get_suggestion(cmd)
         return handler(args)
 
+    def _handle_dashboard(self, args: list[str]) -> str:
+        stats = self._state.get_stats()
+        birthdays = self._state.address_book_manager.get_dashboard_birthdays()
+        return self._renderer.format_dashboard(stats, birthdays)
+
     def _handle_exit(self, args: list[str]) -> object:
         return EXIT_SENTINEL
 
     def _handle_help(self, args: list[str]) -> str:
-        return self._run_help()
+        return self._renderer.format_help()
 
     def _handle_contacts(self, args: list[str]) -> str:
-        search_term = args[0] if args else ""
+        normalized = [a.lower() for a in args] if args else []
+        match normalized:
+            case []:
+                return self._contacts_list("")
+            case ["add"]:
+                return self._contacts_add()
+            case ["edit", index_str]:
+                return self._contacts_edit(index_str)
+            case ["delete", index_str]:
+                return self._contacts_delete(index_str)
+            case [search_term, *_]:
+                return self._contacts_list(args[0])
+
+    def _contacts_list(self, search_term: str) -> str:
         rows = self._state.address_book_manager.get_contacts_table_data(search_term)
         return self._renderer.format_contacts_table(rows)
 
+    def _contacts_add(self) -> str:
+        form = ContactConsoleForm()
+        data = form.prompt()
+        self._state.address_book_manager.add_contact(data)
+        # Після додавання показуємо оновлений список
+        return self._contacts_list("")
+
+    def _contacts_edit(self, index_str: str) -> str:
+        try:
+            index = int(index_str)
+        except ValueError:
+            return "⚠ Індекс має бути числом."
+
+        contacts = self._state.address_book_manager.contacts
+        if index < 0 or index >= len(contacts):
+            return "⚠ Контакт з таким індексом не знайдено."
+
+        contact = contacts[index]
+        existing = contact.to_dict()
+        # Використовуємо тільки поля, що підтримує форма
+        existing_data = {
+            "name": existing.get("name", ""),
+            "phone": existing.get("phone", ""),
+            "email": existing.get("email", ""),
+            "address": existing.get("address", ""),
+            "birthday": existing.get("birthday", ""),
+        }
+        form = ContactConsoleForm(existing=existing_data)
+        data = form.prompt()
+        self._state.address_book_manager.edit_contact(index, data)
+        return self._contacts_list("")
+
+    def _contacts_delete(self, index_str: str) -> str:
+        try:
+            index = int(index_str)
+        except ValueError:
+            return "⚠ Індекс має бути числом."
+
+        contacts = self._state.address_book_manager.contacts
+        if index < 0 or index >= len(contacts):
+            return "⚠ Контакт з таким індексом не знайдено."
+
+        self._state.address_book_manager.delete_contact(index)
+        return self._contacts_list("")
+
     def _handle_notes(self, args: list[str]) -> str:
-        search_term = args[0] if args else ""
+        normalized = [a.lower() for a in args] if args else []
+        match normalized:
+            case []:
+                return self._notes_list("")
+            case ["add"]:
+                return self._notes_add()
+            case ["edit", index_str]:
+                return self._notes_edit(index_str)
+            case ["delete", index_str]:
+                return self._notes_delete(index_str)
+            case [search_term, *_]:
+                return self._notes_list(args[0])
+
+    def _notes_list(self, search_term: str) -> str:
         rows = self._state.notes_manager.get_notes_table_data(search_term)
         return self._renderer.format_notes_table(rows)
+
+    def _notes_add(self) -> str:
+        form = NoteConsoleForm()
+        data = form.prompt()
+        self._state.notes_manager.add_note(data)
+        return self._notes_list("")
+
+    def _notes_edit(self, index_str: str) -> str:
+        try:
+            index = int(index_str)
+        except ValueError:
+            return "⚠ Індекс має бути числом."
+
+        notes = self._state.notes_manager.notes
+        if index < 0 or index >= len(notes):
+            return "⚠ Нотатку з таким індексом не знайдено."
+
+        note = notes[index]
+        existing = note.to_dict()
+        existing_data = {
+            "text": existing.get("text", ""),
+            "tags": existing.get("tags", ""),
+        }
+        form = NoteConsoleForm(existing=existing_data)
+        data = form.prompt()
+        self._state.notes_manager.edit_note(index, data)
+        return self._notes_list("")
+
+    def _notes_delete(self, index_str: str) -> str:
+        try:
+            index = int(index_str)
+        except ValueError:
+            return "⚠ Індекс має бути числом."
+
+        notes = self._state.notes_manager.notes
+        if index < 0 or index >= len(notes):
+            return "⚠ Нотатку з таким індексом не знайдено."
+
+        self._state.notes_manager.delete_note(index)
+        return self._notes_list("")
 
     def _handle_birthdays(self, args: list[str]) -> str:
         try:
@@ -74,14 +192,3 @@ class CommandDispatcher:
             days = 7
         rows = self._state.address_book_manager.get_birthdays_table_data(days)
         return self._renderer.format_birthdays_table(rows)
-
-    def _run_help(self) -> str:
-        help_lines = [
-            "📖 Доступні команди:",
-            "  👥 contacts [пошук] — список контактів",
-            "  📝 notes [пошук]    — список нотаток",
-            "  🎂 birthdays [днів] — іменинники на N днів",
-            "  ❓ help             — ця підказка",
-            "  👋 exit / quit      — вихід",
-        ]
-        return "\n".join(help_lines)
