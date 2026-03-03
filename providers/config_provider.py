@@ -10,9 +10,8 @@ class ConfigProvider:
     """Провайдер конфігурації застосунку через файл та через аргументи командного рядка"""
 
     @staticmethod
-    def load() -> AppConfig:
+    def load(config_path: Path = Path("config.yaml")) -> AppConfig:
         """Фабричний метод який читає конфігурацію"""
-        config_path = Path("config.yaml")
         default_config = AppConfig()
         if not config_path.exists():
             logger.warning("Config file not found: %s", config_path)
@@ -23,7 +22,8 @@ class ConfigProvider:
                 file_config = yaml.safe_load(f) or {}
                 merged_config = ConfigProvider.__get_merged_settings(
                     file_config, args_config, default_config)
-                return AppConfig(**merged_config)
+                app_section = merged_config.get("app", merged_config)
+                return AppConfig(**app_section)
         except Exception as e:
             logger.error("Cannot create application config")
             logger.exception(e)
@@ -41,7 +41,12 @@ class ConfigProvider:
     @staticmethod
     def __get_merged_settings(file_config: dict, args_config: ArgsNamespace, default: AppConfig) -> dict:
         """Метод мержить налаштування із конфіг-файлу та із аргументів командного рядка"""
-        merged = dict(file_config.get("app", default.__dict__))
+        app_section = file_config.get("app")
+        merged: dict = (
+            {**default.model_dump(), **app_section}
+            if isinstance(app_section, dict)
+            else default.model_dump()
+        )
         for k, v in vars(args_config).items():
             if v is not None:
                 merged[k] = v

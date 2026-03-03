@@ -33,7 +33,7 @@ class BaseModel(ABC):
 
     def __repr__(self) -> str:
         cls_name: str = self.__class__.__name__
-        field_strings: list[str] = [f"{k}={v!r}" for k, v in self.__dict__]
+        field_strings: list[str] = [f"{k}={v!r}" for k, v in self.__dict__.items()]
         return f"{cls_name}({', '.join(field_strings)})"
 
     @final
@@ -46,7 +46,10 @@ class BaseModel(ABC):
     @classmethod
     def _transform_form_data(cls, data: dict) -> dict:
         """Віртуальний метод для трансформації типів із словника (форми)"""
-        id = data.get("id")
-        if isinstance(id, str) and id:
-            data["id"] = UUID(id)
+        id_value = data.get("id")
+        if isinstance(id_value, str):
+            if id_value:
+                data["id"] = UUID(id_value)
+            else:
+                data.pop("id", None)
         return data
