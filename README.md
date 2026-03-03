@@ -21,7 +21,7 @@ python -m venv .venv
 .venv\Scripts\activate
 # Linux/macOS:
 # source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python main.py
 ```
 

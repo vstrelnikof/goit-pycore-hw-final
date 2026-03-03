@@ -37,7 +37,7 @@
 3. **Встановлення залежностей:**
 
    ```bash
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
 
 4. **Запуск:**
@@ -50,9 +50,9 @@
 Для перевірки коду (ruff) та тестів:
 
 ```bash
-pip install -r requirements-dev.txt
-ruff check .
-pytest tests/ -v
+python -m pip install -r requirements-dev.txt
+python -m ruff check .
+python -m pytest tests/ -v
 ```
 
 Детальніше — [development.md](development.md).

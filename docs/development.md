@@ -8,7 +8,7 @@
 
 1. Встановіть dev-залежності (у тому числі `pre-commit`):
    ```bash
-   pip install -r requirements-dev.txt
+   python -m pip install -r requirements-dev.txt
    ```
 2. Встановіть хуки в репозиторії:
    ```bash
@@ -60,7 +60,7 @@ pytest tests/ --tb=short
 Опційно встановіть dev-залежності:
 
 ```bash
-pip install -r requirements-dev.txt
+python -m pip install -r requirements-dev.txt
 ```
 
 Перевірка коду (ruff):
