@@ -13,7 +13,6 @@ if platform.system() == "Windows":
 else:
     os.system('clear')
 
-# Логування налаштовуємо одразу з дефолтним рівнем, щоб повідомлення з ConfigProvider потрапляли у файл
 logging.basicConfig(
     filename="assistant.log",
     level=logging.INFO,

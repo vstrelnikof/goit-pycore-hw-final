@@ -13,7 +13,6 @@ def test_load_uses_defaults_when_config_missing(tmp_path: Path, monkeypatch: pyt
     assert isinstance(app_config, AppConfig)
     assert app_config.log_level == logging.INFO
 
-
 def test_load_reads_config_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr("sys.argv", ["pytest"])
@@ -34,7 +33,6 @@ def test_load_reads_config_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch)
     path_str = str(app_config.app_data_paths.address_book)
     assert path_str.replace("\\", "/").endswith("data/ab.json")
 
-
 def test_load_classic_true_when_arg_passed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
     config_path = tmp_path / "config.yaml"
@@ -45,7 +43,6 @@ def test_load_classic_true_when_arg_passed(tmp_path: Path, monkeypatch: pytest.M
     monkeypatch.setattr("sys.argv", ["main.py", "--classic"])
     app_config = ConfigProvider.load(config_path)
     assert app_config.classic is True
-
 
 def test_load_classic_from_config_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)

@@ -61,9 +61,9 @@ class Renderer:
     def format_contacts_table(self, rows: TableData) -> str:
         """Таблиця контактів з індексом для edit/delete."""
         if not rows:
-            return Colors.dim("Контактів не знайдено.")
+            return Colors.dim("📭 Контактів не знайдено.")
         col_widths = [4, 25, 18, 22, 20, 12]
-        titles = ["", "Ім'я", "Телефон", "Email", "Адреса", "Дата"]
+        titles = ["", "👤 Ім'я", "📞 Телефон", "✉ Email", "📍 Адреса", "🎂 Дата"]
         aligns: list[Align] = [">", "<", "<", "<", "<", "<"]
         return "\n".join(
             self._format_table(rows, col_widths, titles, aligns, show_index=True)
@@ -72,11 +72,11 @@ class Renderer:
     def format_notes_table(self, rows: TableData) -> str:
         """Таблиця нотаток з індексом."""
         if not rows:
-            return Colors.dim("Нотаток не знайдено.")
+            return Colors.dim("📝 Нотаток не знайдено.")
         width_text = 55
         width_tags = 30
         col_widths = [4, width_text, width_tags]
-        titles = ["", "Зміст", "Теги"]
+        titles = ["", "📝 Зміст", "🏷 Теги"]
         aligns: list[Align] = [">", "<", "<"]
         truncated_rows: TableData = [
             TableRow(
@@ -95,9 +95,9 @@ class Renderer:
     def format_birthdays_table(self, rows: TableData) -> str:
         """Таблиця днів народження."""
         if not rows:
-            return Colors.dim("На вказаний період іменинників немає.")
+            return Colors.dim("🎂 На вказаний період іменинників немає.")
         col_widths = [12, 20, 18, 22, 20]
-        titles = ["Дата", "Ім'я", "Телефон", "Email", "Адреса"]
+        titles = ["🎂 Дата", "👤 Ім'я", "📞 Телефон", "✉ Email", "📍 Адреса"]
         aligns: list[Align] = [">", "<", "<", "<", "<"]
         return "\n".join(
             self._format_table(rows, col_widths, titles, aligns, show_index=False)

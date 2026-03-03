@@ -1,5 +1,4 @@
 from typing import final
-
 from models.app_config import AppConfig
 from providers.storage_provider import StorageProvider
 from services.address_book_service import AddressBookService
