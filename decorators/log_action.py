@@ -15,7 +15,8 @@ def log_action(
     def decorator(func: Callable):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            logger.log(level, f"{prefix}: {func.__name__} started")
+            log_extra = {"funcName": func.__name__, "name": func.__module__}
+            logger.log(level, f"{prefix}: {func.__name__} started", extra=log_extra)
             start: float | None = time.perf_counter() if log_time else None
             # Перевірка на асинхронність
             if inspect.iscoroutinefunction(func):
@@ -35,7 +36,9 @@ def log_action(
             if start_time:
                 duration = time.perf_counter() - start_time
                 msg += f" in {duration:.4f}s"
-            logger.log(level, msg)
+            logger.log(
+                level, msg, extra={"funcName": func.__name__, "name": func.__module__}
+            )
 
         return wrapper
 
