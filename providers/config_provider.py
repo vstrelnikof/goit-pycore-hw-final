@@ -1,6 +1,6 @@
 import logging
 import yaml
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace as ArgsNamespace
 from pathlib import Path
 from models.app_config import AppConfig
 
@@ -16,10 +16,10 @@ class ConfigProvider:
             logging.warning("Config file not found: %s", config_path)
             return default_config
         try:
-            args_config = ConfigProvider.__parse_app_args()
+            args_config = ConfigProvider.__get_app_args()
             with open(config_path, "r", encoding="utf-8") as f:
                 file_config = yaml.safe_load(f) or {}
-                merged_config = ConfigProvider.__merge_configs(
+                merged_config = ConfigProvider.__get_merged_settings(
                     file_config, args_config, default_config)
                 return AppConfig(**merged_config)
         except Exception as e:
@@ -28,7 +28,7 @@ class ConfigProvider:
             return default_config
 
     @staticmethod
-    def __parse_app_args() -> Namespace:
+    def __get_app_args() -> ArgsNamespace:
         """Метод парсить налаштування із аргументів командного рядка"""
         parser = ArgumentParser(description="Personal assistant configuration")
         parser.add_argument("--theme", type=str, help="Personal assistant theme")
@@ -37,7 +37,7 @@ class ConfigProvider:
         return args
     
     @staticmethod
-    def __merge_configs(file_config: dict, args_config: Namespace, default: AppConfig) -> dict:
+    def __get_merged_settings(file_config: dict, args_config: ArgsNamespace, default: AppConfig) -> dict:
         """Метод мержить налаштування із конфіг-файлу та із аргументів командного рядка"""
         merged = dict(file_config.get("app", default.__dict__))
         for k, v in vars(args_config).items():
