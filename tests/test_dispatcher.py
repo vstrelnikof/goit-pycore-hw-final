@@ -7,6 +7,7 @@ from utils.state import AppState
 
 @pytest.fixture
 def app_state(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> AppState:
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setattr("sys.argv", ["pytest"])
     config_path = tmp_path / "config.yaml"
     config_path.write_text(
