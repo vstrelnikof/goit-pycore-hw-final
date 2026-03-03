@@ -128,7 +128,7 @@ class Renderer:
         lines.append("📊 Personal Assistant (classic mode)")
         lines.append("-" * 60)
         lines.append(f"👥 Контактів: {stats['contacts']}")
-        lines.append(f"📝 Нотаток : {stats['notes']}")
+        lines.append(f"📝 Нотаток:   {stats['notes']}")
         lines.append("")
         lines.append("🎂 Найближчі дні народження:")
         for line in birthdays:
