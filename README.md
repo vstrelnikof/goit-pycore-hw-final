@@ -50,7 +50,3 @@ python main.py --classic
 - ⌨️ [Classic (консольний режим)](docs/classic.md)
 - ⚙️ [Конфігурація](docs/configuration.md)
 - 🧪 [Розробка та тести](docs/development.md)
-
-## 📄 Ліцензія
-
-Навчальний проєкт (GOIT Python Core).
