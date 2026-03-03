@@ -62,6 +62,7 @@ class AddressBookService(BaseService):
                     index=i,
                 )
             )
+        table_data.sort(key=lambda row: row.cells[0])
         return table_data
 
     def get_birthdays_table_data(self, days: int) -> TableData:
