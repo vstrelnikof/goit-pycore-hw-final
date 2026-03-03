@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
-
 from models.base_model import BaseModel
 from models.note import Note
-
 
 def test_base_model_repr_uses_class_name_and_fields():
     @dataclass(kw_only=True)
@@ -19,14 +17,12 @@ def test_base_model_repr_uses_class_name_and_fields():
     assert "DummyModel" in text
     assert "name='test'" in text
 
-
 def test_note_transform_form_data_splits_tags_string():
     data = {"text": "hello", "tags": "one, two , three"}
 
     note = Note.from_dict(data)
 
     assert note.tags == ["one", "two", "three"]
-
 
 def test_base_model_transform_form_data_handles_empty_id():
     @dataclass(kw_only=True)
@@ -39,4 +35,3 @@ def test_base_model_transform_form_data_handles_empty_id():
 
     # Має бути створений новий UUID, а не пустий рядок
     assert isinstance(instance.id, UUID)
-
