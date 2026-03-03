@@ -58,16 +58,18 @@ class AddressBookService(BaseService):
             birthday_date: date | None = contact.get_next_birthday_date(today)
             if not birthday_date or not self.is_birthday_soon(birthday_date, days, today):
                 continue
-            table_data.append(TableRow(
-                cells=[
-                    birthday_date.isoformat(),
-                    contact.phone,
-                    contact.email,
-                    contact.address,
-                    contact.name,
-                ],
-                index=i,
-            ))
+            table_data.append(
+                TableRow(
+                    cells=[
+                        birthday_date.isoformat(),
+                        contact.name,
+                        contact.phone,
+                        contact.email,
+                        contact.address,
+                    ],
+                    index=i,
+                )
+            )
         table_data.sort(key=lambda row: row.cells[0])
         return table_data
 
