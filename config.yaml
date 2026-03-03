@@ -7,7 +7,7 @@ app:
   # INFO = 20
   # DEBUG = 10
   # NOTSET = 0
-  log_level: 20
+  log_level: 10
   # default/monochrome/green/bright
   theme: "default"
   app_data_paths:

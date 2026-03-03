@@ -47,7 +47,7 @@ class ConfigProvider:
             if isinstance(app_section, dict)
             else default.model_dump()
         )
-        for k, v in vars(args_config).items():
+        for k, v in args_config.__dict__.items():
             if v is not None:
                 merged[k] = v
         return merged
