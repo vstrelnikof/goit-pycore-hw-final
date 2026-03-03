@@ -4,6 +4,8 @@ from argparse import ArgumentParser, Namespace as ArgsNamespace
 from pathlib import Path
 from models.app_config import AppConfig
 
+logger = logging.getLogger(__name__)
+
 class ConfigProvider:
     """Провайдер конфігурації застосунку через файл та через аргументи командного рядка"""
 
@@ -13,7 +15,7 @@ class ConfigProvider:
         config_path = Path("config.yaml")
         default_config = AppConfig()
         if not config_path.exists():
-            logging.warning("Config file not found: %s", config_path)
+            logger.warning("Config file not found: %s", config_path)
             return default_config
         try:
             args_config = ConfigProvider.__get_app_args()
@@ -23,8 +25,8 @@ class ConfigProvider:
                     file_config, args_config, default_config)
                 return AppConfig(**merged_config)
         except Exception as e:
-            logging.error("Cannot create application config")
-            logging.exception(e)
+            logger.error("Cannot create application config")
+            logger.exception(e)
             return default_config
 
     @staticmethod

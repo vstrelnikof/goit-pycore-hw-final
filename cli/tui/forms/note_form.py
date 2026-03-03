@@ -7,6 +7,8 @@ from enums.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 from models.note import Note
 
+logger = logging.getLogger(__name__)
+
 class NoteForm(BaseForm):
     """Клас форми створення/редагування нататки"""
 
@@ -53,10 +55,8 @@ class NoteForm(BaseForm):
     def _ok(self):
         assert self.scene is not None
         self.save()
-
         if not self.data or not self._validate_form():
             return
-
         try:
             if self._state.edit_index is None:
                 self._state.notes_manager.add_note(self.data)
@@ -69,8 +69,8 @@ class NoteForm(BaseForm):
             )
             self._clear_edit_index()
         except Exception as e:
-            logging.error("Cannot save Note")
-            logging.exception(e)
+            logger.error("Cannot save Note")
+            logger.exception(e)
             self.scene.add_effect(
                 PopUpDialog(self._screen,
                             "❌ Помилка збереження Нотатки",

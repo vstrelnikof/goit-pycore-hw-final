@@ -31,7 +31,8 @@ logging.basicConfig(filename="assistant.log",
                     level=app_config.log_level,
                     filemode="w",
                     datefmt="%Y-%m-%d %H:%M:%S",
-                    format="[%(asctime)s] %(levelname)s %(message)s")
+                    format="[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s")
+logger = logging.getLogger(__name__)
 
 # Контейнер стану застосунку
 app_state = AppState(app_config)
@@ -50,5 +51,5 @@ def demo(screen: Screen, state: AppState):
                 stop_on_resize=True,
                 repeat=True)
 
-logging.info("Starting personal assistant...")
+logger.info("Starting personal assistant...")
 Screen.wrapper(demo, arguments=[app_state])

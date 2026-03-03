@@ -8,6 +8,8 @@ from enums.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 from models.contact import Contact
 
+logger = logging.getLogger(__name__)
+
 class ContactForm(BaseForm):
     """Клас форми створення/редагування контакту"""
 
@@ -63,10 +65,8 @@ class ContactForm(BaseForm):
     def _ok(self):
         assert self.scene is not None
         self.save()
-
         if not self.data or not self._validate_form():
             return
-
         try:
             if self._state.edit_index is None:
                 self._state.address_book_manager.add_contact(self.data)
@@ -79,8 +79,8 @@ class ContactForm(BaseForm):
             )
             self._clear_edit_index()
         except Exception as e:
-            logging.error("Cannot save Contact")
-            logging.exception(e)
+            logger.error("Cannot save Contact")
+            logger.exception(e)
             self.scene.add_effect(
                 PopUpDialog(self._screen,
                             "❌ Помилка збереження Контакту",

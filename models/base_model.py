@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 from typing import final
 from uuid import UUID, uuid4
 
+logger = logging.getLogger(__name__)
+
 @dataclass(kw_only=True)
 class BaseModel(ABC):
     """Архі-тип для реалізації моделі даних"""
@@ -15,7 +17,7 @@ class BaseModel(ABC):
         validation_result: dict = self._validate()
         has_errors: bool = any(not result for result in validation_result.values())
         if has_errors:
-            logging.warning(f"Model validation failed: {str(validation_result)}")
+            logger.warning(f"Model validation failed: {str(validation_result)}")
         return not has_errors
 
     def to_dict(self) -> dict:

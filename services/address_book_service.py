@@ -90,4 +90,4 @@ class AddressBookService(BaseService):
         self.storage.save([c.to_dict() for c in self.contacts])
 
     def reload(self) -> None:
-        self.contacts = [Contact.from_dict(c) for c in self.storage.load()]
+        self.contacts = [Contact.from_dict(c) for c in self.storage.load_list()]

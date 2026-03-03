@@ -50,4 +50,4 @@ class NotesService(BaseService):
         self.storage.save([c.to_dict() for c in self.notes])
 
     def reload(self) -> None:
-        self.notes = [Note.from_dict(n) for n in self.storage.load()]
+        self.notes = [Note.from_dict(n) for n in self.storage.load_list()]
