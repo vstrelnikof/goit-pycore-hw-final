@@ -1,7 +1,7 @@
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox, Text, CheckBox
-from cli.tui.scene_type import SceneType
+from enums.scene_type import SceneType
 from cli.tui.views.base_grid_view import BaseGridView
 from factories.scene_factory import SceneFactory
 

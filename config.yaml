@@ -8,6 +8,5 @@ app:
   # DEBUG = 10
   # NOTSET = 0
   log_level: 20
-  tui:
-    # default/monochrome/green/bright
-    theme: "default"
+  # default/monochrome/green/bright
+  theme: "default"

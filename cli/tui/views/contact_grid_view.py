@@ -2,7 +2,7 @@ from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, MultiColumnListBox
 from cli.tui.views.base_grid_view import BaseGridView
-from cli.tui.scene_type import SceneType
+from enums.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 
 class ContactGridView(BaseGridView):

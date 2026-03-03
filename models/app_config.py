@@ -1,15 +1,10 @@
-from dataclasses import dataclass
 import logging
 from typing import final
+from pydantic import BaseModel
+from enums.theme_type import ThemeType
 
 @final
-@dataclass
-class AppConfig:
+class AppConfig(BaseModel):
     """Модель конфігу застосунку"""
-    theme: str
-    log_level: int
-
-    @classmethod
-    def default(cls):
-        """Фабричний метод для створення екземпляру за замовчуванням"""
-        return AppConfig(theme="default", log_level=logging.INFO)
+    log_level: int = logging.INFO
+    theme: ThemeType = ThemeType.DEFAULT

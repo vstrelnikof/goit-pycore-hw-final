@@ -3,7 +3,7 @@ from abc import abstractmethod
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, Button, PopUpDialog, Divider, Widget
 from cli.tui.base_frame import BaseFrame
-from cli.tui.scene_type import SceneType
+from enums.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 
 class BaseForm(BaseFrame):

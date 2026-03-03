@@ -7,7 +7,7 @@ from providers.config_provider import ConfigProvider
 from utils.state import AppState
 from asciimatics.screen import Screen
 from asciimatics.scene import Scene
-from cli.tui.scene_type import SceneType
+from enums.scene_type import SceneType
 from cli.tui.forms.contact_form import ContactForm
 from cli.tui.forms.note_form import NoteForm
 from cli.tui.views.dashboard_view import DashboardView

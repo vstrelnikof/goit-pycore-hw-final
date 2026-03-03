@@ -4,7 +4,7 @@ from utils.validator import Validator
 from asciimatics.screen import Screen
 from asciimatics.widgets import Layout, Text, PopUpDialog, Label, Divider
 from cli.tui.forms.base_form import BaseForm
-from cli.tui.scene_type import SceneType
+from enums.scene_type import SceneType
 from factories.scene_factory import SceneFactory
 from models.contact import Contact
 

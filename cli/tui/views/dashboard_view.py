@@ -4,7 +4,7 @@ from asciimatics.screen import Screen
 from asciimatics.event import KeyboardEvent
 from asciimatics.widgets import Layout, Label, Divider, ListBox, Button, TextBox
 from asciimatics.exceptions import StopApplication
-from cli.tui.scene_type import SceneType
+from enums.scene_type import SceneType
 from cli.tui.base_frame import BaseFrame
 from factories.scene_factory import SceneFactory
 
