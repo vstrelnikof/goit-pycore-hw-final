@@ -21,12 +21,14 @@ class CommandHandler:
             "add": self._contacts_add,
             "edit": self._contacts_edit,
             "delete": self._contacts_delete,
+            "search": self._contacts_search,
         }
         self.note_actions_map: dict[str, Callable[..., str]] = {
             "add": self._notes_add,
             "show": self._notes_show,
             "edit": self._notes_edit,
             "delete": self._notes_delete,
+            "search": self._notes_search,
         }
 
     @staticmethod
@@ -104,28 +106,29 @@ class CommandHandler:
         subcommand_map: dict[str, Callable[..., str]],
         list_fn: Callable[[str, int | None], str],
     ) -> str:
-        """Диспетчеризація підкоманд за мапером: збіг → виклик методу, інакше список або підказка."""
+        """Диспетчеризація підкоманд за мапером: збіг → виклик методу, інакше підказка. Пошук лише через підкоманду search."""
         normalized = [a.lower() for a in args] if args else []
         if not normalized:
-            return list_fn("", None)
+            return self.get_subcommand_suggestion("", tuple(subcommand_map.keys()))
 
         sub, known = normalized[0], tuple(subcommand_map.keys())
         resolved = self._resolve_subcommand(sub, known)
 
+        if resolved == "search":
+            search, limit = self.parse_search_and_limit(args[1:])
+            return list_fn(search, limit)
+
         if resolved is not None and resolved in subcommand_map:
             method = subcommand_map[resolved]
+            # Для bound method signature вже без self — кількість аргументів = len(parameters)
             arg_count = len(inspect.signature(method).parameters)
             if len(normalized) - 1 == arg_count:
                 return method(*normalized[1 : 1 + arg_count])
 
-        if len(normalized) == 1 and normalized[0].isdigit() and int(normalized[0]) > 0:
-            return list_fn("", int(normalized[0]))
-
         if resolved is None and sub.strip():
             return self.get_subcommand_suggestion(sub, known)
 
-        search, limit = self.parse_search_and_limit(args)
-        return list_fn(search, limit)
+        return self.get_subcommand_suggestion(sub, known)
 
     def handle_dashboard(self, args: list[str]) -> str:
         stats = self._state.get_stats()
@@ -147,6 +150,10 @@ class CommandHandler:
             search_term,
             limit,
         )
+
+    def _contacts_search(self, *args: str) -> str:
+        search, limit = self.parse_search_and_limit(list(args))
+        return self._contacts_list(search, limit)
 
     def _contacts_add(self) -> str:
         form = ContactConsoleForm()
@@ -191,6 +198,10 @@ class CommandHandler:
             search_term,
             limit,
         )
+
+    def _notes_search(self, *args: str) -> str:
+        search, limit = self.parse_search_and_limit(list(args))
+        return self._notes_list(search, limit)
 
     def _notes_show(self, index_str: str) -> str:
         notes = self._state.notes_manager.notes

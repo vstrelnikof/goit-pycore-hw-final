@@ -72,12 +72,13 @@ def test_run_help_returns_help_text(app_state: AppState) -> None:
     assert "exit" in result
 
 
-def test_run_contacts_returns_table_or_empty(app_state: AppState) -> None:
+def test_run_contacts_without_subcommand_returns_suggestion(
+    app_state: AppState,
+) -> None:
     d = CommandDispatcher(app_state)
     result = d.run("contacts", [])
     assert isinstance(result, str) and len(result) > 0
-    # Повертається або таблиця (є цифра індексу або переноси рядків), або текст повідомлення
-    assert "\n" in result or "0" in result or "1" in result
+    assert "Підкоманди" in result or "search" in result
 
 
 def test_run_notes_show_returns_full_note_or_error(app_state: AppState) -> None:
@@ -127,7 +128,7 @@ def test_run_contacts_with_limit_shows_footer(app_state: AppState) -> None:
                 "birthday": "",
             }
         )
-    result = d.run("contacts", ["2"])
+    result = d.run("contacts", ["search", "2"])
     assert "Показано 2 з 3" in result
 
 
@@ -135,7 +136,7 @@ def test_run_notes_with_limit_shows_footer(app_state: AppState) -> None:
     d = CommandDispatcher(app_state)
     for i in range(3):
         app_state.notes_manager.add_note({"text": f"Note {i}", "tags": ""})
-    result = d.run("notes", ["2"])
+    result = d.run("notes", ["search", "2"])
     assert "Показано 2 з 3" in result
 
 
