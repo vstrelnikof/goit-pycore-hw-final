@@ -1,5 +1,5 @@
 from cli.classic.colors import Colors
-from cli.classic.dispatcher import EXIT_SENTINEL, CommandDispatcher
+from cli.classic.dispatcher import CommandDispatcher
 from utils.state import AppState
 
 
@@ -16,6 +16,6 @@ def run(app_state: AppState) -> None:
         if not cmd:
             continue
         result = dispatcher.run(cmd, args)
-        if result is EXIT_SENTINEL:
+        if result is CommandDispatcher.EXIT_SENTINEL:
             break
         print(result)

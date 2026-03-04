@@ -1,6 +1,7 @@
 from pathlib import Path
 import pytest
-from cli.classic.dispatcher import EXIT_SENTINEL, CommandDispatcher
+from cli.classic.dispatcher import CommandDispatcher
+from cli.classic.handler import CommandHandler
 from models.app_config import AppConfig
 from providers.config_provider import ConfigProvider
 from utils.state import AppState
@@ -59,8 +60,8 @@ def test_run_unknown_command_returns_suggestion() -> None:
 
 def test_run_exit_returns_sentinel(app_state: AppState) -> None:
     d = CommandDispatcher(app_state)
-    assert d.run("exit", []) == EXIT_SENTINEL
-    assert d.run("quit", []) == EXIT_SENTINEL
+    assert d.run("exit", []) == CommandDispatcher.EXIT_SENTINEL
+    assert d.run("quit", []) == CommandDispatcher.EXIT_SENTINEL
 
 
 def test_run_help_returns_help_text(app_state: AppState) -> None:
@@ -95,23 +96,23 @@ def test_run_notes_show_returns_full_note_or_error(app_state: AppState) -> None:
 
 
 def test_parse_search_and_limit_empty_returns_empty_and_none() -> None:
-    assert CommandDispatcher._parse_search_and_limit([]) == ("", None)
+    assert CommandHandler.parse_search_and_limit([]) == ("", None)
 
 
 def test_parse_search_and_limit_single_number_is_limit() -> None:
-    assert CommandDispatcher._parse_search_and_limit(["5"]) == ("", 5)
+    assert CommandHandler.parse_search_and_limit(["5"]) == ("", 5)
 
 
 def test_parse_search_and_limit_single_word_is_search() -> None:
-    assert CommandDispatcher._parse_search_and_limit(["john"]) == ("john", None)
+    assert CommandHandler.parse_search_and_limit(["john"]) == ("john", None)
 
 
 def test_parse_search_and_limit_search_and_number() -> None:
-    assert CommandDispatcher._parse_search_and_limit(["john", "10"]) == ("john", 10)
+    assert CommandHandler.parse_search_and_limit(["john", "10"]) == ("john", 10)
 
 
 def test_parse_search_and_limit_multiple_words_and_number() -> None:
-    assert CommandDispatcher._parse_search_and_limit(["a", "b", "3"]) == ("a b", 3)
+    assert CommandHandler.parse_search_and_limit(["a", "b", "3"]) == ("a b", 3)
 
 
 def test_run_contacts_with_limit_shows_footer(app_state: AppState) -> None:
@@ -136,3 +137,24 @@ def test_run_notes_with_limit_shows_footer(app_state: AppState) -> None:
         app_state.notes_manager.add_note({"text": f"Note {i}", "tags": ""})
     result = d.run("notes", ["2"])
     assert "Показано 2 з 3" in result
+
+
+def test_run_contacts_unknown_subcommand_returns_suggestion(
+    app_state: AppState,
+) -> None:
+    d = CommandDispatcher(app_state)
+    result = d.run("contacts", ["xyz"])
+    assert "Підкоманди" in result or "Введіть одну з" in result
+
+
+def test_run_notes_fuzzy_show_executes(app_state: AppState) -> None:
+    d = CommandDispatcher(app_state)
+    app_state.notes_manager.add_note({"text": "Тестова нотатка", "tags": "тег"})
+    result = d.run("notes", ["shw", "0"])
+    assert "Тестова нотатка" in result
+
+
+def test_run_contacts_fuzzy_edit_executes(app_state: AppState) -> None:
+    d = CommandDispatcher(app_state)
+    result = d.run("contacts", ["edi", "0"])
+    assert "Контакт з таким індексом не знайдено" in result
