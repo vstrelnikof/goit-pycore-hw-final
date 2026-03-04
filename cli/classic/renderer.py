@@ -3,7 +3,7 @@ from models.table_row import TableData, TableRow
 from models.note import Note
 from cli.classic.colors import Colors
 
-Align = Literal["<", ">"]
+Align = Literal["<", ">", "^"]
 
 # Спільний список рядків меню команд для дешборду та help.
 _COMMAND_MENU_LINES = [
