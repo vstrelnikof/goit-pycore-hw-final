@@ -5,6 +5,7 @@ from models.contact import Contact
 from models.contact_birthday import ContactBirthday
 from models.table_row import TableData, TableRow
 from services.base_service import BaseService
+from utils.validator import Validator
 
 
 @final
@@ -40,7 +41,7 @@ class AddressBookService(BaseService):
         for i, contact in enumerate(self.contacts):
             is_relevant: bool = any(
                 contact_field_name != "id"
-                and search_term in contact_field_value.lower()
+                and Validator.validate_search_term(contact_field_value, search_term)
                 for contact_field_name, contact_field_value in contact.to_dict().items()
             )
             if not is_relevant:

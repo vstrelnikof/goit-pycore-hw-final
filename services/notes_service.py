@@ -3,6 +3,7 @@ from decorators.log_command_action import log_command_action
 from models.note import Note
 from models.table_row import TableData, TableRow
 from services.base_service import BaseService
+from utils.validator import Validator
 
 
 @final
@@ -38,8 +39,10 @@ class NotesService(BaseService):
     ) -> TableData:
         table_data: TableData = []
         for i, note in enumerate(self.notes):
-            is_relevant: bool = search_term in note.text.lower() or any(
-                [tag for tag in note.tags if search_term in tag.lower()]
+            is_relevant: bool = Validator.validate_search_term(
+                note.text, search_term
+            ) or any(
+                Validator.validate_search_term(tag, search_term) for tag in note.tags
             )
             if not is_relevant:
                 continue

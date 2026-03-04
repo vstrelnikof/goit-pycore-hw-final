@@ -41,3 +41,26 @@ def test_validate_days_checks_digits_only() -> None:
     assert Validator.validate_days("") is False
     assert Validator.validate_days("ten") is False
     assert Validator.validate_days("10days") is False
+
+
+def test_validate_search_term_empty_term_matches_any() -> None:
+    assert Validator.validate_search_term("anything", "") is True
+
+
+def test_validate_search_term_substring_case_insensitive() -> None:
+    assert Validator.validate_search_term("Alice", "alice") is True
+    assert Validator.validate_search_term("bob@example.com", "example") is True
+    assert Validator.validate_search_term("Alice", "x") is False
+
+
+def test_validate_search_term_wildcard_default() -> None:
+    assert Validator.validate_search_term("Alice", "*ice") is True
+    assert Validator.validate_search_term("Alice", "Ali*") is True
+    assert Validator.validate_search_term("Second important", "*ond*") is True
+    assert Validator.validate_search_term("Bob", "*ice") is False
+
+
+def test_validate_search_term_wildcard_parameterized() -> None:
+    # інший символ wildcard
+    assert Validator.validate_search_term("hello", "he%o", wildcard="%") is True
+    assert Validator.validate_search_term("hello", "he*o", wildcard="%") is False

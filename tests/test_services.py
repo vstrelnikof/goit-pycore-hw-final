@@ -121,6 +121,14 @@ def test_get_contacts_table_data_filters_by_search_term(
     assert len(rows) == 1
     assert rows[0].cells[0] == "Alice"
 
+    # Wildcard * — будь-які символи
+    rows_wild = address_book_service.get_contacts_table_data("*ice")
+    assert len(rows_wild) == 1
+    assert rows_wild[0].cells[0] == "Alice"
+    rows_wild = address_book_service.get_contacts_table_data("Ali*")
+    assert len(rows_wild) == 1
+    assert rows_wild[0].cells[0] == "Alice"
+
 
 def test_add_note_valid_creates_and_persists_record(
     notes_service: NotesService,
@@ -153,6 +161,11 @@ def test_get_notes_table_data_filters_and_sorts(
     rows = notes_service.get_notes_table_data("second")
     assert len(rows) == 1
     assert "Second important" in rows[0].cells[0]
+
+    # Wildcard * у пошуку
+    rows_wild = notes_service.get_notes_table_data("*ond*")
+    assert len(rows_wild) == 1
+    assert "Second important" in rows_wild[0].cells[0]
 
     # Без фільтру, але з сортуванням за індексом спаданням
     all_rows_desc = notes_service.get_notes_table_data("", sort_desc=True)

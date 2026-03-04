@@ -21,3 +21,18 @@ class Validator:
     @staticmethod
     def validate_days(days_str: str) -> bool:
         return days_str.isdigit()
+
+    @staticmethod
+    def validate_search_term(text: str, search_term: str, wildcard: str = "*") -> bool:
+        if not search_term:
+            return True
+        text_lower = text.lower()
+        search_lower = search_term.lower()
+        if wildcard not in search_lower:
+            return search_lower in text_lower
+        escaped = re.escape(wildcard)
+        parts = re.split(rf"{escaped}+", search_lower)
+        pattern = ".*".join(re.escape(p) for p in parts if p)
+        if not pattern:
+            return True
+        return re.search(pattern, text_lower) is not None
