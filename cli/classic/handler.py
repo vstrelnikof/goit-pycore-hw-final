@@ -6,6 +6,9 @@ from cli.classic.forms import ContactConsoleForm, NoteConsoleForm
 from cli.classic.renderer import Renderer
 from utils.state import AppState
 
+# (рядок використання для підказки, обробник підкоманди)
+SubcommandEntry = tuple[str, Callable[..., str]]
+
 
 @final
 class CommandHandler:
@@ -17,18 +20,18 @@ class CommandHandler:
     def __init__(self, state: AppState) -> None:
         self._state = state
         self._renderer = Renderer()
-        self.contact_actions_map: dict[str, Callable[..., str]] = {
-            "add": self._contacts_add,
-            "edit": self._contacts_edit,
-            "delete": self._contacts_delete,
-            "search": self._contacts_search,
+        self.contact_handlers: dict[str, SubcommandEntry] = {
+            "add": ("add", self._contacts_add),
+            "edit": ("edit <індекс>", self._contacts_edit),
+            "delete": ("delete <індекс>", self._contacts_delete),
+            "search": ("search [пошук] [N]", self._contacts_search),
         }
-        self.note_actions_map: dict[str, Callable[..., str]] = {
-            "add": self._notes_add,
-            "show": self._notes_show,
-            "edit": self._notes_edit,
-            "delete": self._notes_delete,
-            "search": self._notes_search,
+        self.note_handlers: dict[str, SubcommandEntry] = {
+            "add": ("add", self._notes_add),
+            "show": ("show <індекс>", self._notes_show),
+            "edit": ("edit <індекс>", self._notes_edit),
+            "delete": ("delete <індекс>", self._notes_delete),
+            "search": ("search [пошук] [N]", self._notes_search),
         }
 
     @staticmethod
@@ -58,18 +61,44 @@ class CommandHandler:
         return index, None
 
     def get_subcommand_suggestion(
-        self, unknown_sub: str, known: tuple[str, ...]
+        self,
+        unknown_sub: str,
+        known: tuple[str, ...],
+        *,  # Всі наступні keyword-only
+        usage_map: dict[str, str] | None = None,
     ) -> str:
         """Підказка, коли підкоманда не знайдена (немає навіть fuzzy-збігу)."""
-        sub = unknown_sub.strip().lower()
-        if not sub:
+        parts = [(usage_map or {}).get(k, k) for k in known]
+        parts_str = ", ".join(parts)
+        if not unknown_sub.strip():
+            return f"💡 Підкоманди: {parts_str}."
+        return f"❓ Невідома підкоманда. Введіть одну з: {parts_str}."
+
+    def get_subcommand_params_hint(
+        self,
+        resolved: str,
+        expected_count: int,
+        actual_count: int,
+        context_name: str,
+        usage_map: dict[str, str],
+    ) -> str:
+        """Підказка, коли підкоманда вірна, але параметрів не вистачає або зайво."""
+        usage = usage_map.get(resolved, resolved)
+        prefix = f"{context_name} " if context_name else ""
+        if expected_count == 0:
             return (
-                "💡 Підкоманди: " + ", ".join(known) + ". Ліміт — число в кінці рядка."
+                f"💡 Підкоманда '{resolved}' не потребує параметрів. "
+                f"Приклад: {prefix}{resolved}"
+            )
+        if actual_count < expected_count:
+            need = "індекс (число)" if "індекс" in usage else "параметри"
+            return (
+                f"💡 Підкоманда '{resolved}' потребує параметр: {need}. "
+                f"Приклад: {prefix}{usage}"
             )
         return (
-            "❓ Невідома підкоманда. Введіть одну з: "
-            + ", ".join(known)
-            + ". Ліміт — число в кінці."
+            f"💡 Підкоманда '{resolved}' приймає лише {expected_count} параметр(и). "
+            f"Використання: {prefix}{usage}"
         )
 
     @staticmethod
@@ -103,15 +132,21 @@ class CommandHandler:
     def _handle_subcommands(
         self,
         args: list[str],
-        subcommand_map: dict[str, Callable[..., str]],
+        handlers: dict[str, SubcommandEntry],
         list_fn: Callable[[str, int | None], str],
+        *,
+        context_name: str = "",
     ) -> str:
-        """Диспетчеризація підкоманд за мапером: збіг → виклик методу, інакше підказка. Пошук лише через підкоманду search."""
+        """Обробка підкоманд: збіг → виклик обробника, інакше підказка. Пошук лише через підкоманду search."""
         normalized = [a.lower() for a in args] if args else []
-        if not normalized:
-            return self.get_subcommand_suggestion("", tuple(subcommand_map.keys()))
+        known = tuple(handlers.keys())
+        subcommand_map = {k: v[1] for k, v in handlers.items()}
+        usage_map = {k: v[0] for k, v in handlers.items()}
 
-        sub, known = normalized[0], tuple(subcommand_map.keys())
+        if not normalized:
+            return self.get_subcommand_suggestion("", known, usage_map=usage_map)
+
+        sub = normalized[0]
         resolved = self._resolve_subcommand(sub, known)
 
         if resolved == "search":
@@ -120,15 +155,15 @@ class CommandHandler:
 
         if resolved is not None and resolved in subcommand_map:
             method = subcommand_map[resolved]
-            # Для bound method signature вже без self — кількість аргументів = len(parameters)
             arg_count = len(inspect.signature(method).parameters)
-            if len(normalized) - 1 == arg_count:
+            given_count = len(normalized) - 1
+            if given_count == arg_count:
                 return method(*normalized[1 : 1 + arg_count])
+            return self.get_subcommand_params_hint(
+                resolved, arg_count, given_count, context_name, usage_map
+            )
 
-        if resolved is None and sub.strip():
-            return self.get_subcommand_suggestion(sub, known)
-
-        return self.get_subcommand_suggestion(sub, known)
+        return self.get_subcommand_suggestion(sub, known, usage_map=usage_map)
 
     def handle_dashboard(self, args: list[str]) -> str:
         stats = self._state.get_stats()
@@ -140,10 +175,13 @@ class CommandHandler:
 
     def handle_contacts(self, args: list[str]) -> str:
         return self._handle_subcommands(
-            args, self.contact_actions_map, self._contacts_list
+            args,
+            self.contact_handlers,
+            self._contacts_list,
+            context_name="contacts",
         )
 
-    def _contacts_list(self, search_term: str, limit: int | None) -> str:
+    def _contacts_list(self, search_term: str, limit: int | None = None) -> str:
         return self._list_with_limit(
             self._state.address_book_manager.get_contacts_table_data,
             self._renderer.format_contacts_table,
@@ -159,26 +197,17 @@ class CommandHandler:
         form = ContactConsoleForm()
         data = form.prompt()
         self._state.address_book_manager.add_contact(data)
-        return self._contacts_list("", None)
+        return self._contacts_list("")
 
     def _contacts_edit(self, index_str: str) -> str:
         contacts = self._state.address_book_manager.contacts
         index, err = self._parse_index(index_str, len(contacts), "Контакт")
         if err is not None:
             return err
-        contact = contacts[index]
-        existing = contact.to_dict()
-        existing_data = {
-            "name": existing.get("name", ""),
-            "phone": existing.get("phone", ""),
-            "email": existing.get("email", ""),
-            "address": existing.get("address", ""),
-            "birthday": existing.get("birthday", ""),
-        }
-        form = ContactConsoleForm(existing=existing_data)
+        form = ContactConsoleForm(existing=contacts[index].to_dict())
         data = form.prompt()
         self._state.address_book_manager.edit_contact(index, data)
-        return self._contacts_list("", None)
+        return self._contacts_list("")
 
     def _contacts_delete(self, index_str: str) -> str:
         contacts = self._state.address_book_manager.contacts
@@ -186,10 +215,15 @@ class CommandHandler:
         if err is not None:
             return err
         self._state.address_book_manager.delete_contact(index)
-        return self._contacts_list("", None)
+        return self._contacts_list("")
 
     def handle_notes(self, args: list[str]) -> str:
-        return self._handle_subcommands(args, self.note_actions_map, self._notes_list)
+        return self._handle_subcommands(
+            args,
+            self.note_handlers,
+            self._notes_list,
+            context_name="notes",
+        )
 
     def _notes_list(self, search_term: str, limit: int | None) -> str:
         return self._list_with_limit(
@@ -221,13 +255,9 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(notes), "Нотатку")
         if err is not None:
             return err
-        note = notes[index]
-        existing = note.to_dict()
-        existing_data = {
-            "text": existing.get("text", ""),
-            "tags": existing.get("tags", ""),
-        }
-        form = NoteConsoleForm(existing=existing_data)
+        form = NoteConsoleForm(
+            existing={"text": notes[index].text, "tags": notes[index].tags_string}
+        )
         data = form.prompt()
         self._state.notes_manager.edit_note(index, data)
         return self._notes_list("", None)
