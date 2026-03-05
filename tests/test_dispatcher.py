@@ -39,7 +39,7 @@ def test_parse_line_empty_returns_empty_command_and_args() -> None:
 def test_get_suggestion_returns_matches_when_similar() -> None:
     state = AppState(AppConfig())
     d = CommandDispatcher(state)
-    msg = d.get_suggestion("contacs")
+    msg = d.get_unknown_message("contacs")
     assert "contacs" in msg
     assert "contacts" in msg
 
@@ -47,7 +47,7 @@ def test_get_suggestion_returns_matches_when_similar() -> None:
 def test_get_suggestion_returns_help_hint_when_no_match() -> None:
     state = AppState(AppConfig())
     d = CommandDispatcher(state)
-    msg = d.get_suggestion("xyz")
+    msg = d.get_unknown_message("xyz")
     assert "help" in msg.lower()
 
 

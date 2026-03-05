@@ -32,6 +32,11 @@ class CommandDispatcher:
         }
 
     @staticmethod
+    def _normalize_command(raw: str) -> str:
+        """Повертає команду в уніфікованому вигляді: зрізані пробіли та нижній регістр."""
+        return raw.strip().lower()
+
+    @staticmethod
     def parse_line(line: str) -> tuple[str, list[str]]:
         """Повертає (команда в нижньому регістрі, список аргументів)."""
         parts = line.strip().split()
@@ -41,34 +46,39 @@ class CommandDispatcher:
         args = parts[1:] if len(parts) > 1 else []
         return (cmd, args)
 
-    def get_suggestion(self, unknown_cmd: str) -> str:
+    def get_unknown_message(self, unknown_cmd: str) -> str:
         """Підказка при невідомій команді першого рівня: найближча команда або порада ввести help."""
-        if not unknown_cmd.strip():
+        raw = unknown_cmd.strip()
+        if not raw:
             return "💡 Введіть help — список команд."
         known = list(self._handlers.keys())
+        normalized = self._normalize_command(raw)
         matches = difflib.get_close_matches(
-            unknown_cmd.strip().lower(), known, n=1, cutoff=self.SUBCMD_CUTOFF
+            normalized, known, n=1, cutoff=self.SUBCMD_CUTOFF
         )
         if matches:
-            return f"❓ Невідома команда «{unknown_cmd.strip()}». Можливо, ви мали на увазі: {matches[0]}"
+            return (
+                f"❓ Невідома команда «{raw}». Можливо, ви мали на увазі: {matches[0]}"
+            )
         return "❓ Невідома команда. Введіть help — список доступних команд."
 
     def run(self, cmd: str, args: list[str]) -> str | object:
         """Виконує команду та повертає рядок результату або EXIT_SENTINEL."""
-        handler = self._handlers.get(cmd)
+        normalized = self._normalize_command(cmd)
+        handler = self._handlers.get(normalized)
         if handler is not None:
             return handler(args)
 
         # Невідома команда: якщо є одна близька — виконуємо її
-        if cmd.strip():
+        if normalized:
             known = list(self._handlers.keys())
             matches = difflib.get_close_matches(
-                cmd.strip().lower(), known, n=1, cutoff=self.SUBCMD_CUTOFF
+                normalized, known, n=1, cutoff=self.SUBCMD_CUTOFF
             )
             if len(matches) == 1:
                 return self._handlers[matches[0]](args)
 
-        return self.get_suggestion(cmd)
+        return self.get_unknown_message(normalized or cmd)
 
     def _handle_exit(self, args: list[str]) -> object:
         return self.EXIT_SENTINEL
