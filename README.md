@@ -69,6 +69,6 @@ python main.py --classic
 
 - 📦 [Встановлення](docs/installation.md)
 - 🖥️ [TUI (інтерфейс asciimatics)](docs/tui.md)
-- ⌨️ [Classic (консольний режим)](docs/classic.md)
+- ⌨️ [Classic (текстовий режим)](docs/classic.md)
 - ⚙️ [Конфігурація](docs/configuration.md)
 - 🧪 [Розробка та тести](docs/development.md)
