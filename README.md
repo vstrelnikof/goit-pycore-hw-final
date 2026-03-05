@@ -13,7 +13,7 @@
 
 ## 🚀 Швидкий старт
 
-### Встановлення як Python-пакет (рекомендовано)
+### Встановлення як Python-пакет
 
 ```bash
 git clone https://github.com/vstrelnikof/goit-pycore-hw-final.git
@@ -33,7 +33,7 @@ personal-assistant            # TUI
 personal-assistant --classic  # класичний режим
 ```
 
-### Запуск без встановлення (старий варіант)
+### Запуск без встановлення
 
 ```bash
 git clone https://github.com/vstrelnikof/goit-pycore-hw-final.git
