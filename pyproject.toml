@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "personal-assistant"
+version = "0.1.0"
+description = "Console personal assistant for managing contacts and notes (TUI and classic modes)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "asciimatics==1.15.0",
+    "PyYAML==6.0.3",
+    "pydantic==2.12.5",
+    "pytest>=7.0.0",
+    "colorama>=0.4.6",
+    "Faker>=30.0.0",
+]
+
+[project.scripts]
+personal-assistant = "main:main"
+
+[tool.setuptools]
+packages = [
+    "cli",
+    "cli.classic",
+    "cli.classic.forms",
+    "cli.tui",
+    "cli.tui.forms",
+    "cli.tui.views",
+    "models",
+    "services",
+    "providers",
+    "utils",
+    "decorators",
+    "enums",
+    "helpers",
+    "factories",
+]
+py-modules = ["main"]
+
