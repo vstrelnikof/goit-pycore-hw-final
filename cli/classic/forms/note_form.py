@@ -1,13 +1,11 @@
 from cli.classic.colors import Colors
+from cli.classic.forms.base_form import ConsoleFormBase
 
 
-class NoteConsoleForm:
+class NoteConsoleForm(ConsoleFormBase):
     """Інтерактивна форма введення / редагування нотатки."""
 
-    def __init__(self, existing: dict | None = None) -> None:
-        self._existing = existing or {}
-
-    def prompt(self) -> dict:
+    def _prompt_text(self) -> str:
         print(Colors.title("📝 Текст нотатки (завершіть порожнім рядком або крапкою):"))
         existing_text: str = self._existing.get("text") or ""
         if existing_text.strip():
@@ -18,7 +16,7 @@ class NoteConsoleForm:
 
         lines: list[str] = []
         while True:
-            line = input(Colors.dim("│ "))
+            line = self._read_line_or_raise()
             if line.strip() in ("", "."):
                 break
             lines.append(line)
@@ -27,17 +25,25 @@ class NoteConsoleForm:
             print(Colors.error("  ⚠ Текст обов'язковий."))
             lines = []
             while True:
-                line = input(Colors.dim("│ "))
+                line = self._read_line_or_raise()
                 if line.strip() in ("", "."):
                     break
                 lines.append(line)
             text = "\n".join(lines)
+        return text
 
-        existing_tags = self._existing.get("tags", "")
-        tags_prompt = (
+    def _prompt_tags(self) -> str:
+        existing = self._existing.get("tags", "")
+        prompt = (
             "🏷 Теги (через кому): "
-            if not existing_tags
-            else f"🏷 Теги (через кому) {existing_tags}: "
+            if not existing
+            else f"🏷 Теги (через кому) {existing}: "
         )
-        tags_str = input(Colors.accent(tags_prompt)).strip() or existing_tags
-        return {"text": text, "tags": tags_str}
+        return self._read_field(prompt, existing)
+
+    def prompt(self) -> dict:
+        self._print_cancel_hint()
+        return {
+            "text": self._prompt_text(),
+            "tags": self._prompt_tags(),
+        }

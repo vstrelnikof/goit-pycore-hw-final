@@ -2,7 +2,7 @@ import difflib
 import inspect
 from typing import Callable, final
 
-from cli.classic.forms import ContactConsoleForm, NoteConsoleForm
+from cli.classic.forms import ContactConsoleForm, FormCancelledError, NoteConsoleForm
 from cli.classic.renderer import Renderer
 from utils.state import AppState
 
@@ -16,6 +16,7 @@ class CommandHandler:
 
     # Коефіцієнт схожості для fuzzy-збігу підкоманд.
     SUBCMD_CUTOFF = 0.1
+    CANCEL_MESSAGE = "✗ Дію скасовано."
 
     def __init__(self, state: AppState) -> None:
         self._state = state
@@ -195,7 +196,10 @@ class CommandHandler:
 
     def _contacts_add(self) -> str:
         form = ContactConsoleForm()
-        data = form.prompt()
+        try:
+            data = form.prompt()
+        except FormCancelledError:
+            return CommandHandler.CANCEL_MESSAGE
         self._state.address_book_manager.add_contact(data)
         return self._contacts_list("")
 
@@ -205,7 +209,10 @@ class CommandHandler:
         if err is not None:
             return err
         form = ContactConsoleForm(existing=contacts[index].to_dict())
-        data = form.prompt()
+        try:
+            data = form.prompt()
+        except FormCancelledError:
+            return CommandHandler.CANCEL_MESSAGE
         self._state.address_book_manager.edit_contact(index, data)
         return self._contacts_list("")
 
@@ -246,7 +253,10 @@ class CommandHandler:
 
     def _notes_add(self) -> str:
         form = NoteConsoleForm()
-        data = form.prompt()
+        try:
+            data = form.prompt()
+        except FormCancelledError:
+            return CommandHandler.CANCEL_MESSAGE
         self._state.notes_manager.add_note(data)
         return self._notes_list("", None)
 
@@ -258,7 +268,10 @@ class CommandHandler:
         form = NoteConsoleForm(
             existing={"text": notes[index].text, "tags": notes[index].tags_string}
         )
-        data = form.prompt()
+        try:
+            data = form.prompt()
+        except FormCancelledError:
+            return CommandHandler.CANCEL_MESSAGE
         self._state.notes_manager.edit_note(index, data)
         return self._notes_list("", None)
 

@@ -1,79 +1,70 @@
 from cli.classic.colors import Colors
+from cli.classic.forms.base_form import ConsoleFormBase
 from utils.validator import Validator
 
 
-class ContactConsoleForm:
+class ContactConsoleForm(ConsoleFormBase):
     """Інтерактивна форма введення / редагування контакту."""
 
-    def __init__(self, existing: dict | None = None) -> None:
-        self._existing = existing or {}
-
-    def prompt(self) -> dict:
-        data: dict = {}
-
-        # Ім'я
-        existing_name = self._existing.get("name", "")
-        name_prompt = (
-            "👤 Ім'я*: " if not existing_name else f"👤 Ім'я* [{existing_name}]: "
-        )
-        name = input(Colors.accent(name_prompt)).strip() or existing_name
+    def _prompt_name(self) -> str:
+        existing = self._existing.get("name", "")
+        prompt = "👤 Ім'я*: " if not existing else f"👤 Ім'я* [{existing}]: "
+        name = self._read_field(prompt, existing)
         while not name:
             print(Colors.error("  ⚠ Поле обов'язкове."))
-            name = input(Colors.accent(name_prompt)).strip() or existing_name
-        data["name"] = name
+            name = self._read_field(prompt, existing)
+        return name
 
-        # Телефон
-        existing_phone = self._existing.get("phone", "")
-        phone_prompt = (
+    def _prompt_phone(self) -> str:
+        existing = self._existing.get("phone", "")
+        prompt = (
             "📞 Телефон (+380XXXXXXXXX): "
-            if not existing_phone
-            else f"📞 Телефон (+380XXXXXXXXX) [{existing_phone}]: "
+            if not existing
+            else f"📞 Телефон (+380XXXXXXXXX) [{existing}]: "
         )
-        phone = input(Colors.accent(phone_prompt)).strip() or existing_phone
+        phone = self._read_field(prompt, existing)
         while phone and not Validator.validate_phone(phone):
             print(Colors.error("  ⚠ Невірний формат. Приклад: +380501234567"))
-            phone = input(Colors.accent(phone_prompt)).strip() or existing_phone
-        data["phone"] = phone
+            phone = self._read_field(prompt, existing)
+        return phone
 
-        # Email
-        existing_email = self._existing.get("email", "")
-        email_prompt = (
-            "✉ Email: " if not existing_email else f"✉ Email [{existing_email}]: "
-        )
-        email = input(Colors.accent(email_prompt)).strip() or existing_email
+    def _prompt_email(self) -> str:
+        existing = self._existing.get("email", "")
+        prompt = "✉ Email: " if not existing else f"✉ Email [{existing}]: "
+        email = self._read_field(prompt, existing)
         while email and not Validator.validate_email(email):
             print(Colors.error("  ⚠ Невірний формат email."))
-            email = input(Colors.accent(email_prompt)).strip() or existing_email
-        data["email"] = email
+            email = self._read_field(prompt, existing)
+        return email
 
-        # Адреса
-        existing_address = self._existing.get("address", "")
-        address_prompt = (
-            "📍 Адреса: "
-            if not existing_address
-            else f"📍 Адреса [{existing_address}]: "
-        )
-        data["address"] = (
-            input(Colors.accent(address_prompt)).strip() or existing_address
-        )
+    def _prompt_address(self) -> str:
+        existing = self._existing.get("address", "")
+        prompt = "📍 Адреса: " if not existing else f"📍 Адреса [{existing}]: "
+        return self._read_field(prompt, existing)
 
-        # День народження
-        existing_birthday_raw = self._existing.get("birthday", "")
-        if existing_birthday_raw and hasattr(existing_birthday_raw, "isoformat"):
-            existing_birthday = existing_birthday_raw.isoformat()
+    def _prompt_birthday(self) -> str:
+        raw = self._existing.get("birthday", "")
+        if raw and hasattr(raw, "isoformat"):
+            existing = raw.isoformat()
         else:
-            existing_birthday = existing_birthday_raw or ""
-        birthday_prompt = (
+            existing = raw or ""
+        prompt = (
             "🎂 День народження (YYYY-MM-DD): "
-            if not existing_birthday
-            else f"🎂 День народження (YYYY-MM-DD) [{existing_birthday}]: "
+            if not existing
+            else f"🎂 День народження (YYYY-MM-DD) [{existing}]: "
         )
-        birthday = input(Colors.accent(birthday_prompt)).strip() or existing_birthday
+        birthday = self._read_field(prompt, existing)
         while birthday and not Validator.validate_date(birthday):
             print(Colors.error("  ⚠ Невірний формат дати. Приклад: 1990-05-15"))
-            birthday = (
-                input(Colors.accent(birthday_prompt)).strip() or existing_birthday
-            )
-        data["birthday"] = birthday
+            birthday = self._read_field(prompt, existing)
+        return birthday
 
-        return data
+    def prompt(self) -> dict:
+        self._print_cancel_hint()
+        return {
+            "name": self._prompt_name(),
+            "phone": self._prompt_phone(),
+            "email": self._prompt_email(),
+            "address": self._prompt_address(),
+            "birthday": self._prompt_birthday(),
+        }
