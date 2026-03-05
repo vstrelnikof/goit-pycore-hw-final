@@ -13,8 +13,10 @@ class ConfigProvider:
 
     @staticmethod
     def __merge_args_into(base: dict, args_config: ArgsNamespace) -> dict:
-        """Доповнює base значеннями з аргументів (лише не-None)."""
+        """Доповнює base значеннями з аргументів"""
         for k, v in args_config.__dict__.items():
+            if k == "config":
+                continue
             if v is not None:
                 base[k] = v
         return base
@@ -24,6 +26,10 @@ class ConfigProvider:
         """Фабричний метод який читає конфігурацію"""
         default_config = AppConfig()
         args_config = ConfigProvider.__get_app_args()
+        cli_config = getattr(args_config, "config", None)
+        if cli_config:
+            config_path = ConfigProvider.__resolve_config_path(cli_config, config_path)
+
         if not config_path.exists():
             logger.warning("Config file not found: %s", config_path)
             merged = ConfigProvider.__merge_args_into(
@@ -45,6 +51,19 @@ class ConfigProvider:
                 default_config.model_dump(), args_config
             )
             return AppConfig(**merged)
+
+    @staticmethod
+    def __resolve_config_path(cli_value: str, base_path: Path) -> Path:
+        """Обирає шлях до конфіг-файлу на основі значення --config"""
+        candidate = Path(cli_value)
+
+        if any(sep in cli_value for sep in ("/", "\\")) or candidate.suffix in {
+            ".yaml",
+            ".yml",
+        }:
+            return candidate
+
+        return base_path.with_name(f"{base_path.stem}.{cli_value}{base_path.suffix}")
 
     @staticmethod
     def __get_app_args() -> ArgsNamespace:
@@ -71,6 +90,11 @@ class ConfigProvider:
             default=0,
             metavar="N",
             help="Generate N fake notes before starting",
+        )
+        parser.add_argument(
+            "--config",
+            type=str,
+            help=("Config file path or profile name (e.g. 'dev' -> config.dev.yaml)"),
         )
         args = parser.parse_args()
         return args

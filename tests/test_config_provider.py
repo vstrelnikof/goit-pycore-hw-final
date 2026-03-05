@@ -101,3 +101,68 @@ def test_create_fakes_default_zero_when_no_args(
     app_config = ConfigProvider.load(config_path)
     assert app_config.create_fakes_contacts == 0
     assert app_config.create_fakes_notes == 0
+
+
+def test_load_uses_profile_config_when_cli_config_profile(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """--config <profile> має вибирати config.<profile>.yaml поруч із базовим файлом."""
+    monkeypatch.chdir(tmp_path)
+    base_config_path = tmp_path / "config.yaml"
+    base_config_path.write_text(
+        "app:\n"
+        "  log_level: 20\n"
+        "  app_data_paths:\n"
+        "    address_book: data/base.json\n"
+        "    notes: data/base_notes.json\n",
+        encoding="utf-8",
+    )
+    profile_config_path = tmp_path / "config.test.yaml"
+    profile_config_path.write_text(
+        "app:\n"
+        "  log_level: 10\n"
+        "  app_data_paths:\n"
+        "    address_book: data/test.json\n"
+        "    notes: data/test_notes.json\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr("sys.argv", ["main.py", "--config", "test"])
+    app_config = ConfigProvider.load(base_config_path)
+
+    assert app_config.log_level == 10
+    path_str = str(app_config.app_data_paths.address_book)
+    assert path_str.replace("\\", "/").endswith("data/test.json")
+
+
+def test_load_uses_explicit_config_path_from_cli(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """--config <path> має використовувати явний шлях до файлу конфігурації."""
+    monkeypatch.chdir(tmp_path)
+    # Базовий файл, який не повинен бути використаний
+    base_config_path = tmp_path / "config.yaml"
+    base_config_path.write_text(
+        "app:\n"
+        "  log_level: 20\n"
+        "  app_data_paths:\n"
+        "    address_book: data/base.json\n"
+        "    notes: data/base_notes.json\n",
+        encoding="utf-8",
+    )
+    explicit_config_path = tmp_path / "custom_config.yaml"
+    explicit_config_path.write_text(
+        "app:\n"
+        "  log_level: 30\n"
+        "  app_data_paths:\n"
+        "    address_book: data/custom.json\n"
+        "    notes: data/custom_notes.json\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr("sys.argv", ["main.py", "--config", str(explicit_config_path)])
+    app_config = ConfigProvider.load()
+
+    assert app_config.log_level == 30
+    path_str = str(app_config.app_data_paths.address_book)
+    assert path_str.replace("\\", "/").endswith("data/custom.json")
