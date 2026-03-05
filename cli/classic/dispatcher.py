@@ -15,7 +15,7 @@ class CommandDispatcher:
     # Спеціальне значення, що повертається при команді виходу (exit/quit).
     EXIT_SENTINEL = object()
     # Коефіцієнт схожості для fuzzy-збігу команд.
-    SUBCMD_CUTOFF = 0.4
+    SUBCMD_CUTOFF = 0.1
 
     def __init__(self, state: AppState) -> None:
         self._state = state

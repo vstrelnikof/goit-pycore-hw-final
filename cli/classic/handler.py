@@ -12,7 +12,7 @@ class CommandHandler:
     """Виконує дії за командами: дашборд, контакти, нотатки, дні народження."""
 
     # Коефіцієнт схожості для fuzzy-збігу підкоманд.
-    SUBCMD_CUTOFF = 0.4
+    SUBCMD_CUTOFF = 0.1
 
     def __init__(self, state: AppState) -> None:
         self._state = state

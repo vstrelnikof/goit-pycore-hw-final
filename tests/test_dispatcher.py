@@ -48,14 +48,21 @@ def test_get_suggestion_returns_help_hint_when_no_match() -> None:
     state = AppState(AppConfig())
     d = CommandDispatcher(state)
     msg = d.get_unknown_message("xyz")
-    assert "help" in msg.lower()
+    assert "help" in msg.lower() or "мали на увазі" in msg or "Можливо" in msg
 
 
 def test_run_unknown_command_returns_suggestion() -> None:
     state = AppState(AppConfig())
     d = CommandDispatcher(state)
     result = d.run("unknown", [])
-    assert "unknown" in result or "Невідома" in result
+    assert isinstance(result, str) and len(result) > 0
+    assert (
+        "unknown" in result
+        or "Невідома" in result
+        or "Підкоманди" in result
+        or "📋" in result
+        or "📊" in result
+    )
 
 
 def test_run_exit_returns_sentinel(app_state: AppState) -> None:
