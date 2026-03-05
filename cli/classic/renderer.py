@@ -26,7 +26,7 @@ _COMMAND_MENU_LINES = [
 ]
 
 
-class Renderer:
+class CommandRenderer:
     """Форматування виводу команд: таблиці з колонками заданої ширини та вирівнювання."""
 
     _SEP = "  "

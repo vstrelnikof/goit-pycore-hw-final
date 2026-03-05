@@ -3,7 +3,7 @@ import inspect
 from typing import Callable, final
 
 from cli.classic.forms import ContactConsoleForm, FormCancelledError, NoteConsoleForm
-from cli.classic.renderer import Renderer
+from cli.classic.renderer import CommandRenderer
 from utils.state import AppState
 
 # (рядок використання для підказки, обробник підкоманди)
@@ -20,7 +20,7 @@ class CommandHandler:
 
     def __init__(self, state: AppState) -> None:
         self._state = state
-        self._renderer = Renderer()
+        self._renderer = CommandRenderer()
         self.contact_handlers: dict[str, SubcommandEntry] = {
             "add": ("add", self._contacts_add),
             "edit": ("edit <індекс>", self._contacts_edit),

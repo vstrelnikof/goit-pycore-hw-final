@@ -1,16 +1,16 @@
 from models.table_row import TableData, TableRow
-from cli.classic.renderer import Renderer
+from cli.classic.renderer import CommandRenderer
 
 
 def test_format_contacts_table_empty_returns_message() -> None:
-    r = Renderer()
+    r = CommandRenderer()
     out = r.format_contacts_table([])
     assert "Контакт" in out
     assert "не знайдено" in out
 
 
 def test_format_contacts_table_one_row_includes_header_and_index() -> None:
-    r = Renderer()
+    r = CommandRenderer()
     data: TableData = [
         TableRow(cells=["Name", "+380501234567", "a@b.co", "", "1990-01-01"], index=0)
     ]
@@ -21,14 +21,14 @@ def test_format_contacts_table_one_row_includes_header_and_index() -> None:
 
 
 def test_format_notes_table_empty_returns_message() -> None:
-    r = Renderer()
+    r = CommandRenderer()
     out = r.format_notes_table([])
     assert "Нотаток" in out
     assert "не знайдено" in out
 
 
 def test_format_birthdays_table_empty_returns_message() -> None:
-    r = Renderer()
+    r = CommandRenderer()
     out = r.format_birthdays_table([])
     assert "іменинників" in out or "період" in out
 
@@ -36,7 +36,7 @@ def test_format_birthdays_table_empty_returns_message() -> None:
 def test_format_note_full_includes_text_and_tags() -> None:
     from models.note import Note
 
-    r = Renderer()
+    r = CommandRenderer()
     note = Note(
         text="Повний текст нотатки з кількома словами.", tags=["важливо", "робота"]
     )
@@ -49,14 +49,14 @@ def test_format_note_full_includes_text_and_tags() -> None:
 def test_format_note_full_without_tags() -> None:
     from models.note import Note
 
-    r = Renderer()
+    r = CommandRenderer()
     note = Note(text="Проста нотатка без тегів.")
     out = r.format_note_full(note)
     assert "Проста нотатка без тегів" in out
 
 
 def test_format_contacts_table_with_total_count_shows_footer() -> None:
-    r = Renderer()
+    r = CommandRenderer()
     data: TableData = [
         TableRow(cells=["A", "1", "a@b.co", "", "1990-01-01"], index=0),
         TableRow(cells=["B", "2", "b@b.co", "", "1991-01-01"], index=1),
@@ -66,7 +66,7 @@ def test_format_contacts_table_with_total_count_shows_footer() -> None:
 
 
 def test_format_notes_table_with_total_count_shows_footer() -> None:
-    r = Renderer()
+    r = CommandRenderer()
     data: TableData = [
         TableRow(cells=["Текст", "tag1"], index=0),
     ]
