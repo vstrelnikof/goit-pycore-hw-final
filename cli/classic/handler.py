@@ -1,3 +1,4 @@
+from collections import namedtuple
 import difflib
 import inspect
 from typing import Callable, final
@@ -6,8 +7,7 @@ from cli.classic.forms import ContactConsoleForm, FormCancelledError, NoteConsol
 from cli.classic.renderer import CommandRenderer
 from utils.state import AppState
 
-# (рядок використання для підказки, обробник підкоманди)
-SubcommandEntry = tuple[str, Callable[..., str]]
+ActionHandler = namedtuple("SubcommandHandler", ["usage_hint", "handler"])
 
 
 @final
@@ -21,18 +21,18 @@ class CommandHandler:
     def __init__(self, state: AppState) -> None:
         self._state = state
         self._renderer = CommandRenderer()
-        self.contact_handlers: dict[str, SubcommandEntry] = {
-            "add": ("add", self._contacts_add),
-            "edit": ("edit <індекс>", self._contacts_edit),
-            "delete": ("delete <індекс>", self._contacts_delete),
-            "search": ("search [пошук] [N]", self._contacts_search),
+        self.contact_handlers: dict[str, ActionHandler] = {
+            "add": ActionHandler("add", self._contacts_add),
+            "edit": ActionHandler("edit <індекс>", self._contacts_edit),
+            "delete": ActionHandler("delete <індекс>", self._contacts_delete),
+            "search": ActionHandler("search [пошук] [N]", self._contacts_search),
         }
-        self.note_handlers: dict[str, SubcommandEntry] = {
-            "add": ("add", self._notes_add),
-            "show": ("show <індекс>", self._notes_show),
-            "edit": ("edit <індекс>", self._notes_edit),
-            "delete": ("delete <індекс>", self._notes_delete),
-            "search": ("search [пошук] [N]", self._notes_search),
+        self.note_handlers: dict[str, ActionHandler] = {
+            "add": ActionHandler("add", self._notes_add),
+            "show": ActionHandler("show <індекс>", self._notes_show),
+            "edit": ActionHandler("edit <індекс>", self._notes_edit),
+            "delete": ActionHandler("delete <індекс>", self._notes_delete),
+            "search": ActionHandler("search [пошук] [N]", self._notes_search),
         }
 
     @staticmethod
@@ -133,7 +133,7 @@ class CommandHandler:
     def _handle_subcommands(
         self,
         args: list[str],
-        handlers: dict[str, SubcommandEntry],
+        handlers: dict[str, ActionHandler],
         list_fn: Callable[[str, int | None], str],
         *,
         context_name: str = "",
@@ -141,8 +141,8 @@ class CommandHandler:
         """Обробка підкоманд: збіг → виклик обробника, інакше підказка. Пошук лише через підкоманду search."""
         normalized = [a.lower() for a in args] if args else []
         known = tuple(handlers.keys())
-        subcommand_map = {k: v[1] for k, v in handlers.items()}
-        usage_map = {k: v[0] for k, v in handlers.items()}
+        subcommand_map = {k: v.handler for k, v in handlers.items()}
+        usage_map = {k: v.usage_hint for k, v in handlers.items()}
 
         if not normalized:
             return self.get_subcommand_suggestion("", known, usage_map=usage_map)
