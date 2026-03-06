@@ -20,9 +20,9 @@
    ```
    Або вручну:
    ```bash
-   pre-commit autoupdate
-   pre-commit install
-   pre-commit install --hook-type pre-push
+   python -m pre-commit autoupdate
+   python -m pre-commit install
+   python -m pre-commit install --hook-type pre-push
    ```
 
 Після цього:
@@ -33,8 +33,8 @@
 ### Ручний запуск перевірок як у хуках
 
 ```bash
-pre-commit run --all-files                        # усі хуки (pre-commit стадія)
-pre-commit run --all-files --hook-stage pre-push  # лише тести (як перед push)
+python -m pre-commit run --all-files                        # усі хуки (pre-commit стадія)
+python -m pre-commit run --all-files --hook-stage pre-push  # лише тести (як перед push)
 ```
 
 ### Пропуск хуків (не рекомендується)
@@ -60,13 +60,13 @@ pre-commit run --all-files --hook-stage pre-push  # лише тести (як п
 Запуск усіх тестів:
 
 ```bash
-pytest tests/ -v
+python -m pytest tests/ -v
 ```
 
 Короткий вивід:
 
 ```bash
-pytest tests/ --tb=short
+python -m pytest tests/ --tb=short
 ```
 
 Тести покривають: завантаження конфігурації (у т.ч. `--classic` і `classic` у файлі), моделі (BaseModel, Note), провайдер сховища, TableRow/TableData, CommandDispatcher (парсинг, підказки, виконання команд), Renderer (порожні таблиці та таблиці з даними), Validator, AppState, AddressBookService, NotesService та helpers (date_helpers).
@@ -82,15 +82,15 @@ python -m pip install -r requirements-dev.txt
 Перевірка коду (ruff):
 
 ```bash
-ruff check .
-ruff format . --check
+python -m ruff check .
+python -m ruff format . --check
 ```
 
 Автоформатування:
 
 ```bash
-ruff format .
-ruff check . --fix
+python -m ruff format .
+python -m ruff check . --fix
 ```
 
 ## 📁 Структура проєкту (коротко)
