@@ -61,6 +61,19 @@ class CommandHandler:
             return None, f"⚠ {entity} з таким індексом не знайдено."
         return index, None
 
+    @staticmethod
+    def _confirm_delete(entity_name: str) -> bool:
+        """Підтвердження видалення: питає користувача (y/n), повертає True лише для y/yes."""
+        try:
+            reply = (
+                input(f"Ви впевнені, що хочете видалити {entity_name}? (y/n): ")
+                .strip()
+                .lower()
+            )
+        except (EOFError, KeyboardInterrupt):
+            return False
+        return reply in ("y", "yes", "так")
+
     def get_subcommand_suggestion(
         self,
         unknown_sub: str,
@@ -221,6 +234,8 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(contacts), "Контакт")
         if err is not None:
             return err
+        if not self._confirm_delete("контакт"):
+            return CommandHandler.CANCEL_MESSAGE
         self._state.address_book_manager.delete_contact(index)
         return self._contacts_list("")
 
@@ -280,6 +295,8 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(notes), "Нотатку")
         if err is not None:
             return err
+        if not self._confirm_delete("нотатку"):
+            return CommandHandler.CANCEL_MESSAGE
         self._state.notes_manager.delete_note(index)
         return self._notes_list("", None)
 
