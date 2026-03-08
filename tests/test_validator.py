@@ -12,9 +12,13 @@ def test_validate_phone_accepts_valid_international_numbers() -> None:
 def test_validate_phone_rejects_invalid_numbers() -> None:
     assert Validator.validate_phone("380501234567") is False  # missing +
     assert Validator.validate_phone("+123456") is False  # too short (< 7 digits)
-    assert Validator.validate_phone("+080501234567") is False  # country code cannot start with 0
+    assert (
+        Validator.validate_phone("+080501234567") is False
+    )  # country code cannot start with 0
     assert Validator.validate_phone("+12345") is False  # too short
-    assert Validator.validate_phone("+12345678901234567") is False  # too long (> 15 digits)
+    assert (
+        Validator.validate_phone("+12345678901234567") is False
+    )  # too long (> 15 digits)
 
 
 def test_validate_email_accepts_common_formats() -> None:
