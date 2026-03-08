@@ -1,0 +1,26 @@
+# Git hooks: перевірки перед commit та push.
+# Документація: docs/development.md
+
+default_stages: [pre-commit, pre-push]
+
+repos:
+  # Ruff: pre-commit сам ставить ruff у своє середовище — стабільно працює на Windows
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.4
+    hooks:
+      - id: ruff-check
+        stages: [pre-commit]
+        args: [--fix]
+      - id: ruff-format
+        stages: [pre-commit]
+
+  # Перед push обов'язково проходять тести — push без зелених тестів заблоковано
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: python -m pytest tests/ -v --tb=short
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true

@@ -1,0 +1,16 @@
+app:
+  # CRITICAL = 50
+  # FATAL = CRITICAL
+  # ERROR = 40
+  # WARNING = 30
+  # WARN = WARNING
+  # INFO = 20
+  # DEBUG = 10
+  # NOTSET = 0
+  log_level: 20
+  # default/monochrome/green/bright
+  theme: "default"
+  classic: false
+  app_data_paths:
+    address_book: data/contacts.json
+    notes: data/notes.json

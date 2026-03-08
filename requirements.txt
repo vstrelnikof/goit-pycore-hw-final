@@ -1,0 +1,6 @@
+asciimatics==1.15.0
+PyYAML==6.0.3
+pydantic==2.12.5
+pytest>=7.0.0
+colorama>=0.4.6
+Faker>=30.0.0
