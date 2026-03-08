@@ -3,6 +3,7 @@ import difflib
 import inspect
 from typing import Callable, final
 
+from cli.classic.colors import Colors
 from cli.classic.forms import ContactConsoleForm, FormCancelledError, NoteConsoleForm
 from cli.classic.renderer import CommandRenderer
 from utils.state import AppState
@@ -63,16 +64,20 @@ class CommandHandler:
 
     @staticmethod
     def _confirm_delete(entity_name: str) -> bool:
-        """Підтвердження видалення: питає користувача (y/n), повертає True лише для y/yes."""
+        """Підтвердження видалення: питає користувача (y/n), повертає True лише для y."""
         try:
             reply = (
-                input(f"Ви впевнені, що хочете видалити {entity_name}? (y/n): ")
+                input(
+                    (
+                        f"❓ {Colors.RED}Ви впевнені, що хочете видалити {entity_name}?{Colors.RESET} (y/n): "
+                    )
+                )
                 .strip()
                 .lower()
             )
         except (EOFError, KeyboardInterrupt):
             return False
-        return reply in ("y", "yes", "так")
+        return reply == "y"
 
     def get_subcommand_suggestion(
         self,
