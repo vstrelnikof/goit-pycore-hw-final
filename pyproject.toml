@@ -7,7 +7,7 @@ name = "personal-assistant"
 version = "0.1.0"
 description = "Console personal assistant for managing contacts and notes (TUI and classic modes)."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "asciimatics==1.15.0",
     "PyYAML==6.0.3",
