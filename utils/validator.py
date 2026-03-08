@@ -8,7 +8,8 @@ class Validator:
 
     @staticmethod
     def validate_phone(phone: str) -> bool:
-        return re.match(r"^\+380\d{9}$", phone) is not None
+        """Accepts E.164 format: + followed by 7–15 digits (country code + number)."""
+        return re.match(r"^\+[1-9]\d{6,14}$", phone) is not None
 
     @staticmethod
     def validate_email(email: str) -> bool:
