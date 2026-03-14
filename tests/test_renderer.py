@@ -12,7 +12,7 @@ def test_format_contacts_table_empty_returns_message() -> None:
 def test_format_contacts_table_one_row_includes_header_and_index() -> None:
     r = CommandRenderer()
     data: TableData = [
-        TableRow(cells=["Name", "+380501234567", "a@b.co", "", "1990-01-01"], index=0)
+        TableRow(cells=["Name", "+380501234567", "a@b.co", "", "1990-01-01"], id=0)
     ]
     out = r.format_contacts_table(data)
     assert "Ім'я" in out or "Name" in out
@@ -58,8 +58,8 @@ def test_format_note_full_without_tags() -> None:
 def test_format_contacts_table_with_total_count_shows_footer() -> None:
     r = CommandRenderer()
     data: TableData = [
-        TableRow(cells=["A", "1", "a@b.co", "", "1990-01-01"], index=0),
-        TableRow(cells=["B", "2", "b@b.co", "", "1991-01-01"], index=1),
+        TableRow(cells=["A", "1", "a@b.co", "", "1990-01-01"], id=0),
+        TableRow(cells=["B", "2", "b@b.co", "", "1991-01-01"], id=1),
     ]
     out = r.format_contacts_table(data, total_count=10)
     assert "Показано 2 з 10" in out
@@ -68,7 +68,7 @@ def test_format_contacts_table_with_total_count_shows_footer() -> None:
 def test_format_notes_table_with_total_count_shows_footer() -> None:
     r = CommandRenderer()
     data: TableData = [
-        TableRow(cells=["Текст", "tag1"], index=0),
+        TableRow(cells=["Текст", "tag1"], id=0),
     ]
     out = r.format_notes_table(data, total_count=5)
     assert "Показано 1 з 5" in out

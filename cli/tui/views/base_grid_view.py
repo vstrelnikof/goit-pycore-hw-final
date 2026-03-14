@@ -63,7 +63,7 @@ class BaseGridView(BaseFrame):
     def _on_edit(self) -> None:
         if self._list_box.value is None:
             return
-        self._state.edit_index = self._list_box.value
+        self._state.edit_id = self._list_box.value
 
     def _on_delete(self) -> None:
         assert self.scene is not None

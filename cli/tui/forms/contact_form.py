@@ -64,11 +64,11 @@ class ContactForm(BaseForm):
 
     def reset(self) -> None:
         super().reset()
-        if self._state.edit_index is not None:
+        if self._state.edit_id is not None:
             self.title = "👤 Редагування контакту"
-            contact: Contact = self._state.address_book_manager.contacts[
-                self._state.edit_index
-            ]
+            contact: Contact = self._state.address_book_manager.find_contact_by_id(
+                self._state.edit_id
+            )
             self.data = {
                 "name": contact.name,
                 "phone": contact.phone,
@@ -96,11 +96,11 @@ class ContactForm(BaseForm):
         if not self.data or not self._validate_form():
             return
         try:
-            if self._state.edit_index is None:
+            if self._state.edit_id is None:
                 self._state.address_book_manager.add_contact(self.data)
             else:
                 self._state.address_book_manager.edit_contact(
-                    self._state.edit_index, self.data
+                    self._state.edit_id, self.data
                 )
             self.scene.add_effect(
                 PopUpDialog(
@@ -110,7 +110,7 @@ class ContactForm(BaseForm):
                     on_close=lambda _: self._handle_saved(),
                 )
             )
-            self._clear_edit_index()
+            self._clear_edit_id()
         except Exception as e:
             logger.error("Cannot save Contact")
             logger.exception(e)
@@ -123,5 +123,5 @@ class ContactForm(BaseForm):
             )
 
     def _cancel(self) -> None:
-        self._clear_edit_index()
+        self._clear_edit_id()
         SceneFactory.next(SceneType.CONTACTS_GRID)

@@ -24,21 +24,24 @@ class AddressBookService(BaseService):
         self.save()
 
     @log_command_action()
-    def edit_contact(self, index: int, data: dict) -> None:
+    def edit_contact(self, id: str, data: dict) -> None:
         updated_contact: Contact = Contact.from_dict(data)
         if not updated_contact.is_valid():
             return
-        self.contacts[index] = updated_contact
+        for i, contact in enumerate(self.contacts):
+            if str(contact.id) == id:
+                self.contacts[i] = updated_contact
+                break
         self.save()
 
     @log_command_action()
-    def delete_contact(self, index: int) -> None:
-        self.contacts.pop(index)
+    def delete_contact(self, id: str) -> None:
+        self.contacts = [c for c in self.contacts if str(c.id) != id]
         self.save()
 
     def get_contacts_table_data(self, search_term: str) -> TableData:
         table_data: TableData = []
-        for i, contact in enumerate(self.contacts):
+        for contact in self.contacts:
             is_relevant: bool = any(
                 contact_field_name != "id"
                 and Validator.validate_search_term(contact_field_value, search_term)
@@ -57,7 +60,7 @@ class AddressBookService(BaseService):
                         contact.address,
                         birthday,
                     ],
-                    index=i,
+                    id=str(contact.id),
                 )
             )
         table_data.sort(key=lambda row: self._ukrainian_sort_key(row.cells[0]))
@@ -66,7 +69,7 @@ class AddressBookService(BaseService):
     def get_birthdays_table_data(self, days: int) -> TableData:
         table_data: TableData = []
         today: date = datetime.now().date()
-        for i, contact in enumerate(self.contacts):
+        for contact in self.contacts:
             birthday_date: date | None = contact.get_next_birthday_date(today)
             if not birthday_date or not self.is_birthday_soon(
                 birthday_date, days, today
@@ -81,7 +84,7 @@ class AddressBookService(BaseService):
                         contact.email,
                         contact.address,
                     ],
-                    index=i,
+                    id=str(contact.id),
                 )
             )
         table_data.sort(key=lambda row: row.cells[0])

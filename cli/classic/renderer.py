@@ -65,9 +65,9 @@ class CommandRenderer:
         lines.append(Colors.separator("-" * total_width))
         # Рядки
         for row in rows:
-            row_cells, index = row.cells, row.index
+            row_cells = row.cells
             if show_index:
-                cells = [self._cell(str(index), col_widths[0], aligns[0])]
+                cells = [self._cell(str(row.id), col_widths[0], aligns[0])]
                 cells += [
                     self._cell(c, col_widths[i + 1], aligns[i + 1])
                     for i, c in enumerate(row_cells)
@@ -113,7 +113,7 @@ class CommandRenderer:
                     else row.cells[0],
                     row.cells[1],
                 ],
-                index=row.index,
+                id=row.id,
             )
             for row in rows
         ]

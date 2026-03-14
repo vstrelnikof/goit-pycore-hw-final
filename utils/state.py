@@ -18,8 +18,8 @@ class AppState:
         self.address_book_manager = AddressBookService(address_book_storage_provider)
         notes_storage_provider = StorageProvider(app_config.app_data_paths.notes)
         self.notes_manager = NotesService(notes_storage_provider)
-        self.edit_index: int | None = (
-            None  # Сховище для позиції елемента який редагується
+        self.edit_id: str | None = (
+            None  # Сховище для ідентифікатора елемента який редагується
         )
 
     def get_stats(self) -> dict[str, int]:

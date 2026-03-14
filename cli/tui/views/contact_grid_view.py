@@ -46,8 +46,8 @@ class ContactGridView(BaseGridView):
 
     def _confirm_delete(self, selected_button_idx: int) -> None:
         if self._is_popup_confirmed(selected_button_idx):
-            index = self._list_box.value
-            if index is None:
+            id = self._list_box.value
+            if id is None:
                 raise ValueError("selected_button_idx is None")
-            self._state.address_book_manager.delete_contact(index)
+            self._state.address_book_manager.delete_contact(id)
             self._filter_list()  # Оновлюємо таблицю

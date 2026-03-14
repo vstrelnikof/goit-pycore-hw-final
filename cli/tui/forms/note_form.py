@@ -36,9 +36,9 @@ class NoteForm(BaseForm):
 
     def reset(self) -> None:
         super().reset()
-        if self._state.edit_index is not None:
+        if self._state.edit_id is not None:
             self.title = "📝 Редагування нотатки"
-            note: Note = self._state.notes_manager.notes[self._state.edit_index]
+            note: Note = self._state.notes_manager.find_note_by_id(self._state.edit_id)
             self.data = {"text": note.text, "tags": note.tags_string}
             return
         self.title = "📝 Нова нотатка"
@@ -54,10 +54,10 @@ class NoteForm(BaseForm):
         if not self.data or not self._validate_form():
             return
         try:
-            if self._state.edit_index is None:
+            if self._state.edit_id is None:
                 self._state.notes_manager.add_note(self.data)
             else:
-                self._state.notes_manager.edit_note(self._state.edit_index, self.data)
+                self._state.notes_manager.edit_note(self._state.edit_id, self.data)
             self.scene.add_effect(
                 PopUpDialog(
                     self._screen,
@@ -66,7 +66,7 @@ class NoteForm(BaseForm):
                     on_close=lambda _: self._handle_saved(),
                 )
             )
-            self._clear_edit_index()
+            self._clear_edit_id()
         except Exception as e:
             logger.error("Cannot save Note")
             logger.exception(e)
@@ -77,5 +77,5 @@ class NoteForm(BaseForm):
             )
 
     def _cancel(self) -> None:
-        self._clear_edit_index()
+        self._clear_edit_id()
         SceneFactory.next(SceneType.NOTES_GRID)

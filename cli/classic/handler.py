@@ -226,12 +226,13 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(contacts), "Контакт")
         if err is not None:
             return err
+        contact_id = str(contacts[index].id)
         form = ContactConsoleForm(existing=contacts[index].to_dict())
         try:
             data = form.prompt()
         except FormCancelledError:
             return CommandHandler.CANCEL_MESSAGE
-        self._state.address_book_manager.edit_contact(index, data)
+        self._state.address_book_manager.edit_contact(contact_id, data)
         return self._contacts_list("")
 
     def _contacts_delete(self, index_str: str) -> str:
@@ -239,9 +240,10 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(contacts), "Контакт")
         if err is not None:
             return err
+        contact_id = str(contacts[index].id)
         if not self._confirm_delete("контакт"):
             return CommandHandler.CANCEL_MESSAGE
-        self._state.address_book_manager.delete_contact(index)
+        self._state.address_book_manager.delete_contact(contact_id)
         return self._contacts_list("")
 
     def handle_notes(self, args: list[str]) -> str:
@@ -285,6 +287,7 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(notes), "Нотатку")
         if err is not None:
             return err
+        note_id = str(notes[index].id)
         form = NoteConsoleForm(
             existing={"text": notes[index].text, "tags": notes[index].tags_string}
         )
@@ -292,7 +295,7 @@ class CommandHandler:
             data = form.prompt()
         except FormCancelledError:
             return CommandHandler.CANCEL_MESSAGE
-        self._state.notes_manager.edit_note(index, data)
+        self._state.notes_manager.edit_note(note_id, data)
         return self._notes_list("", None)
 
     def _notes_delete(self, index_str: str) -> str:
@@ -300,9 +303,10 @@ class CommandHandler:
         index, err = self._parse_index(index_str, len(notes), "Нотатку")
         if err is not None:
             return err
+        note_id = str(notes[index].id)
         if not self._confirm_delete("нотатку"):
             return CommandHandler.CANCEL_MESSAGE
-        self._state.notes_manager.delete_note(index)
+        self._state.notes_manager.delete_note(note_id)
         return self._notes_list("", None)
 
     def handle_birthdays(self, args: list[str]) -> str:

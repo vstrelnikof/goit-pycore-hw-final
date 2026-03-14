@@ -74,8 +74,9 @@ def test_edit_and_delete_contact_update_storage(
     )
     assert len(address_book_service.contacts) == 1
 
+    contact_id = str(address_book_service.contacts[0].id)
     address_book_service.edit_contact(
-        0,
+        contact_id,
         {
             "name": "New Name",
             "phone": "+380501234567",
@@ -90,7 +91,8 @@ def test_edit_and_delete_contact_update_storage(
     stored_after_edit = list(address_book_service.storage.load_list())
     assert stored_after_edit[0]["name"] == "New Name"
 
-    address_book_service.delete_contact(0)
+    contact_id = str(address_book_service.contacts[0].id)
+    address_book_service.delete_contact(contact_id)
 
     assert len(address_book_service.contacts) == 0
     assert list(address_book_service.storage.load_list()) == []
@@ -167,7 +169,7 @@ def test_get_notes_table_data_filters_and_sorts(
     assert len(rows_wild) == 1
     assert "Second important" in rows_wild[0].cells[0]
 
-    # Без фільтру, але з сортуванням за індексом спаданням
+    # Без фільтру, але з сортуванням за тегами спаданням
     all_rows_desc = notes_service.get_notes_table_data("", sort_desc=True)
     assert len(all_rows_desc) == 2
-    assert all_rows_desc[0].index > all_rows_desc[1].index
+    assert all_rows_desc[0].cells[1] >= all_rows_desc[1].cells[1]

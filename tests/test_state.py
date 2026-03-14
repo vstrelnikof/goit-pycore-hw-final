@@ -25,7 +25,7 @@ def test_app_state_initializes_services_and_theme(app_state: AppState) -> None:
     # Тема береться із конфіґу
     assert app_state.tui_theme == AppConfig().theme
     # За замовчуванням жоден елемент не редагується
-    assert app_state.edit_index is None
+    assert app_state.edit_id is None
 
 
 def test_get_stats_reflects_current_counts(app_state: AppState) -> None:

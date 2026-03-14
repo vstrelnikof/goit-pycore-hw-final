@@ -22,23 +22,26 @@ class NotesService(BaseService):
         self.save()
 
     @log_command_action()
-    def edit_note(self, index: int, data: dict) -> None:
+    def edit_note(self, id: str, data: dict) -> None:
         updated_note: Note = Note.from_dict(data)
         if not updated_note.is_valid():
             return
-        self.notes[index] = updated_note
+        for i, note in enumerate(self.notes):
+            if str(note.id) == id:
+                self.notes[i] = updated_note
+                break
         self.save()
 
     @log_command_action()
-    def delete_note(self, index: int) -> None:
-        self.notes.pop(index)
+    def delete_note(self, id: str) -> None:
+        self.notes = [n for n in self.notes if str(n.id) != id]
         self.save()
 
     def get_notes_table_data(
         self, search_term: str, sort_desc: bool = False
     ) -> TableData:
         table_data: TableData = []
-        for i, note in enumerate(self.notes):
+        for note in self.notes:
             is_relevant: bool = Validator.validate_search_term(
                 note.text, search_term
             ) or any(
@@ -53,7 +56,7 @@ class NotesService(BaseService):
                         (note_text[:75] + "...") if len(note_text) > 75 else note_text,
                         note.tags_string,
                     ],
-                    index=i,
+                    id=str(note.id),
                 )
             )
         table_data.sort(
